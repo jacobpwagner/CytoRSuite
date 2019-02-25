@@ -87,7 +87,7 @@ setGeneric(
 #' @param ... additional arguments passed to
 #'   \code{\link{cyto_plot,flowFrame-method}}.
 #'
-#' @return spillover matrix object and \code{"Spillover Matrix.csv"} file.
+#' @return spillover matrix object and \code{"Spillover-Matrix.csv"} file.
 #'
 #' @examples
 #' library(CytoRSuiteData)
@@ -365,7 +365,7 @@ setMethod(spillover_compute,
 #' @param ... additional arguments passed to
 #'   \code{\link{cyto_plot,flowFrame-method}}.
 #'
-#' @return spillover matrix object and \code{"Spillover Matrix.csv"} file.
+#' @return spillover matrix object and \code{"Spillover-Matrix.csv"} file.
 #'
 #' @examples
 #' library(CytoRSuiteData)
