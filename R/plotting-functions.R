@@ -375,6 +375,95 @@ setMethod(.cyto_axes_text,
     }
   }
 
+  # Take into account overlays for plot limits
+  if(!is.null(overlay)){
+    
+    # flowFrame
+    if (class(overlay) == "flowFrame") {
+      fr <- as(flowSet(list(fr, overlay)), "flowFrame")
+
+    # flowSet
+    } else if (class(overlay) == "flowSet") {
+      ov <- as(overlay, "flowFrame")
+
+      if (is.na(match("Original", BiocGenerics::colnames(ov))) == FALSE) {
+        ov <- ov[, -match("Original", BiocGenerics::colnames(ov))]
+      }
+      fr <- as(flowSet(list(fr, ov)), "flowFrame")
+
+    # list
+    } else if (class(overlay) == "list") {
+
+      # list of flowFrames
+      if (all(unlist(lapply(overlay, function(x){class(x)})) == "flowFrame")) {
+        fr <- as(flowSet(c(list(fr), overlay)), "flowFrame")
+      }
+
+    # list of flowSets
+    } else if (all(unlist(
+      lapply(overlay, function(x){class(x)})
+      ) == "flowFrame")) {
+      ov <- lapply(overlay, function(x) {
+        as(x, "flowFrame")
+      })
+
+      if (!is.na(match("Original", BiocGenerics::colnames(ov[[1]])))) {
+        ov <- lapply(ov, function(fr) {
+          fr <- fr[, -match("Original", BiocGenerics::colnames(fr))]
+
+          return(fr)
+        })
+      }
+      fr <- as(flowSet(c(list(fr), ov)), "flowFrame")
+
+    # list of lists
+    } else if (all(unlist(lapply(overlay, function(x) {
+      class(x)
+    })) == "list")) {
+
+      # flowFrame lists
+      if (all(unlist(lapply(overlay, function(x) {
+        lapply(x, class)
+      })) == "flowFrame")) {
+        fr.lst <- lapply(overlay, function(x) {
+          as(flowSet(x), "flowFrame")
+        })
+
+        if (!is.na(
+          match("Original", BiocGenerics::colnames(fr.lst[[1]]))
+        )) {
+          ov <- lapply(fr.lst, function(fr) {
+            fr <- fr[, -match("Original", BiocGenerics::colnames(fr))]
+
+            return(fr)
+          })
+        }
+        fr <- as(flowSet(c(list(fr), ov)), "flowFrame")
+      }
+
+      # flowSet lists
+      if (all(unlist(lapply(overlay, function(x) {
+        lapply(x, class)
+      })) == "flowSet")) {
+        fr.lst <- lapply(overlay, function(x) {
+          as(x, "flowFrame")
+        })
+
+        if (!is.na(
+          match("Original", BiocGenerics::colnames(fr.lst[[1]]))
+        )) {
+          ov <- lapply(fr.lst, function(fr) {
+            fr <- fr[, -match("Original", BiocGenerics::colnames(fr))]
+
+            return(fr)
+          })
+
+          fr <- as(flowSet(c(list(fr), ov)), "flowFrame")
+        }
+      }
+    }
+  }
+  
   # Extract summary stats
   sm <- pData(parameters(fr))
 
@@ -385,9 +474,9 @@ setMethod(.cyto_axes_text,
       limits <- "data"
     }
     
-    # Extract machine limits
+    # Extract machine limits - minimum always from data
     mlms <- vector()
-    mlms[1] <- sm[sm$name == channel, "minRange"]
+    mlms[1] <- min(exprs(fr)[, channel])
     mlms[2] <- sm[sm$name == channel, "maxRange"]
 
     if (mlms[1] > 0) {
@@ -411,101 +500,6 @@ setMethod(.cyto_axes_text,
 
       # Data limits
     } else if (limits == "data") {
-
-      # No overlay
-      if (is.null(overlay)) {
-
-        # overlay
-      } else if (!is.null(overlay)) {
-
-        # Get merged flowFrame to calculate axes limits
-        # flowFrame
-        if (class(overlay) == "flowFrame") {
-          fr <- as(flowSet(list(fr, overlay)), "flowFrame")
-
-          # flowSet
-        } else if (class(overlay) == "flowSet") {
-          ov <- as(overlay, "flowFrame")
-
-          if (is.na(match("Original", BiocGenerics::colnames(ov))) == FALSE) {
-            ov <- ov[, -match("Original", BiocGenerics::colnames(ov))]
-          }
-          fr <- as(flowSet(list(fr, ov)), "flowFrame")
-
-          # list
-        } else if (class(overlay) == "list") {
-
-          # list of flowFrames
-          if (all(unlist(lapply(overlay, function(x) {
-            class(x)
-          })) == "flowFrame")) {
-            fr <- as(flowSet(c(list(fr), overlay)), "flowFrame")
-          }
-
-          # list of flowSets
-        } else if (all(unlist(lapply(overlay, function(x) {
-          class(x)
-        })) == "flowFrame")) {
-          ov <- lapply(overlay, function(x) {
-            as(x, "flowFrame")
-          })
-
-          if (!is.na(match("Original", BiocGenerics::colnames(ov[[1]])))) {
-            ov <- lapply(ov, function(fr) {
-              fr <- fr[, -match("Original", BiocGenerics::colnames(fr))]
-
-              return(fr)
-            })
-          }
-          fr <- as(flowSet(c(list(fr), ov)), "flowFrame")
-
-          # list of lists
-        } else if (all(unlist(lapply(overlay, function(x) {
-          class(x)
-        })) == "list")) {
-
-          # flowFrame lists
-          if (all(unlist(lapply(overlay, function(x) {
-            lapply(x, class)
-          })) == "flowFrame")) {
-            fr.lst <- lapply(overlay, function(x) {
-              as(flowSet(x), "flowFrame")
-            })
-
-            if (!is.na(
-              match("Original", BiocGenerics::colnames(fr.lst[[1]]))
-            )) {
-              ov <- lapply(fr.lst, function(fr) {
-                fr <- fr[, -match("Original", BiocGenerics::colnames(fr))]
-
-                return(fr)
-              })
-            }
-            fr <- as(flowSet(c(list(fr), ov)), "flowFrame")
-          }
-
-          # flowSet lists
-          if (all(unlist(lapply(overlay, function(x) {
-            lapply(x, class)
-          })) == "flowSet")) {
-            fr.lst <- lapply(overlay, function(x) {
-              as(x, "flowFrame")
-            })
-
-            if (!is.na(
-              match("Original", BiocGenerics::colnames(fr.lst[[1]]))
-            )) {
-              ov <- lapply(fr.lst, function(fr) {
-                fr <- fr[, -match("Original", BiocGenerics::colnames(fr))]
-
-                return(fr)
-              })
-
-              fr <- as(flowSet(c(list(fr), ov)), "flowFrame")
-            }
-          }
-        }
-      }
 
       # Limits from flowFrame
       lms <- range(exprs(fr)[, channel])

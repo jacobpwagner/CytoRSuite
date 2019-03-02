@@ -480,7 +480,7 @@ setMethod(spillover_edit,
 
               cutoff <- MFI[match(input$ychannel, MFI$Channel), ]
 
-              abline(h = cutoff[2], col = "red", lwd = 2)
+              abline(h = cutoff[2], col = "red", lwd = 3)
             }
 
             if (input$trace == TRUE) {
@@ -507,7 +507,7 @@ setMethod(spillover_edit,
 
               lines(medians[, input$xchannel],
                 loessMod,
-                col = "magenta3",
+                col = "purple",
                 lwd = 3
               )
             }
@@ -590,7 +590,7 @@ setMethod(spillover_edit,
                 channel = xchan,
                 axes_trans = axes_trans,
                 overlay = fs.comp()[[input$flowFrame2]],
-                point_col = c("blue", "magenta"),
+                point_col = c("blue", "red"),
                 display = display, point_alpha = 0.6,
                 header = input$flowFrame2,
                 title = NA,
@@ -608,7 +608,7 @@ setMethod(spillover_edit,
                   fs.comp()[[input$flowFrame2]],
                   fs.comp()[[input$Unstained2]]
                 ),
-                point_col = c("blue", "magenta", "black"),
+                point_col = c("blue", "red", "black"),
                 display = display,
                 point_alpha = 0.6,
                 header = input$flowFrame2,
@@ -687,7 +687,7 @@ setMethod(spillover_edit,
               cyto_plot_compensation(fs.comp()[[input$flowFrame2]],
                 channel = xchan,
                 axes_trans = axes_trans,
-                point_col = "magenta",
+                point_col = "red",
                 display = display,
                 point_alpha = 0.6,
                 header = input$flowFrame2,
