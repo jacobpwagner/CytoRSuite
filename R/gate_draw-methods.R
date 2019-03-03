@@ -45,12 +45,12 @@ setGeneric(
 #' Manually draw gates around populations for analysis of flow cytometry data.
 #'
 #' @param x object of class \code{\link[flowCore:flowFrame-class]{flowFrame}}.
-#' @param channels vector of channel names to use for plotting, can be of length
-#'   1 for 1-D density histogram or length 2 for 2-D scatter plot.
 #' @param alias the name(s) of the populations to be gated. If multiple
 #'   population names are supplied (e.g. \code{c("CD3,"CD4)}) multiple gates
 #'   will be returned. \code{alias} is \code{NULL} by default which will halt
 #'   the gating routine.
+#' @param channels vector of channel names to use for plotting, can be of length
+#'   1 for 1-D density histogram or length 2 for 2-D scatter plot.
 #' @param type vector of gate type names used to construct the gates. Multiple
 #'   gate types are supported but should be accompanied with an \code{alias}
 #'   argument of the same length (i.e. one \code{type} per \code{alias}).
@@ -108,8 +108,8 @@ setGeneric(
 setMethod(gate_draw,
   signature = "flowFrame",
   definition = function(x,
-                          channels = NULL,
                           alias = NULL,
+                          channels = NULL,
                           type = "polygon",
                           display = 1 / length(x),
                           axis = "x",
@@ -262,14 +262,12 @@ setMethod(gate_draw,
 #' Manually draw gates around populations for analysis of flow cytometry data.
 #'
 #' @param x object of class \code{\link[flowCore:flowSet-class]{flowSet}}.
-#' @param select vector containing the indices of samples within gs to use for
-#'   plotting.
-#' @param channels vector of channel names to use for plotting, can be of length
-#'   1 for 1-D density histogram or length 2 for 2-D scatter plot.
 #' @param alias the name(s) of the populations to be gated. If multiple
 #'   population names are supplied (e.g. \code{c("CD3,"CD4)}) multiple gates
 #'   will be returned. \code{alias} is \code{NULL} by default which will halt
 #'   the gating routine.
+#' @param channels vector of channel names to use for plotting, can be of length
+#'   1 for 1-D density histogram or length 2 for 2-D scatter plot.
 #' @param type vector of gate type names used to construct the gates. Multiple
 #'   gate types are supported but should be accompanied with an \code{alias}
 #'   argument of the same length (i.e. one \code{type} per \code{alias}).
@@ -280,6 +278,8 @@ setMethod(gate_draw,
 #' @param display numeric [0,1] to control the percentage of events to be
 #'   plotted. Specifying a value for \code{display} can substantial improve
 #'   plotting speed for less powerful machines.
+#' @param select vector containing the indices of samples within gs to use for
+#'   plotting.
 #' @param axis indicates whether the \code{"x"} or \code{"y"} axis should be
 #'   gated for 2-D interval gates.
 #' @param label logical indicating whether to include
@@ -328,11 +328,11 @@ setMethod(gate_draw,
 setMethod(gate_draw,
   signature = "flowSet",
   definition = function(x,
-                          select = NULL,
-                          channels = NULL,
                           alias = NULL,
+                          channels = NULL,
                           type = "polygon",
                           display = 1 / length(x),
+                          select = NULL,
                           axis = "x",
                           density_smooth = 1.5,
                           label = TRUE,
@@ -501,13 +501,6 @@ setMethod(gate_draw,
 #'
 #' @param x object of class
 #'   \code{\link[flowWorkspace:GatingSet-class]{GatingSet}}.
-#' @param group_by vector of pData column names (e.g.
-#'   c("Treatment","Concentration") indicating how the samples should be grouped
-#'   prior to gating, set to the length of x by default to construct a single
-#'   gate for all samples. If group_by is supplied a different gate will be
-#'   constructed for each group.
-#' @param select vector containing the indices of samples within each group to
-#'   use for plotting.
 #' @param channels vector of channel names to use for plotting, can be of length
 #'   1 for 1-D density histogram or length 2 for 2-D scatter plot.
 #' @param parent name of the \code{parent} population to extract for gating.
@@ -523,9 +516,16 @@ setMethod(gate_draw,
 #'   lower case first letters as well. Default \code{type} is \code{"interval"}
 #'   for 1D gates and \code{"polygon"} for 2D gates.
 #' @param gatingTemplate name of \code{gatingTemplate} csv file to be saved.
+#' @param group_by vector of pData column names (e.g.
+#'   c("Treatment","Concentration") indicating how the samples should be grouped
+#'   prior to gating, set to the length of x by default to construct a single
+#'   gate for all samples. If group_by is supplied a different gate will be
+#'   constructed for each group.
 #' @param display numeric [0,1] to control the percentage of events to be
 #'   plotted. Specifying a value for \code{display} can substantial improve
 #'   plotting speed for less powerful machines.
+#' @param select vector containing the indices of samples within each group to
+#'   use for plotting.
 #' @param axis indicates whether the \code{"x"} or \code{"y"} axis should be
 #'   gated for 2-D interval gates.
 #' @param label logical indicating whether to include
@@ -590,14 +590,14 @@ setMethod(gate_draw,
 setMethod(gate_draw,
   signature = "GatingSet",
   definition = function(x,
-                          group_by = NULL,
-                          select = NULL,
                           parent = "root",
                           alias = NULL,
                           channels = NULL,
                           type = "polygon",
                           gatingTemplate = NULL,
+                          group_by = NULL,
                           display = NULL,
+                          select = NULL,
                           axis = "x",
                           density_smooth = 1.5,
                           label = TRUE,

@@ -1,13 +1,26 @@
 #' Remove Gate(s) and Edit gatingTemplate csv File
 #'
 #' @param gs an object of class \code{GatingSet}.
+#' @param parent name of the parent population from which to remove the gate.
+#'   This argument is not necessary but is included to allow conversion of
+#'   \code{gate_draw} code to \code{gate_remove} code by simply changing
+#'   \code{"draw"} to \code{"remove"}.
 #' @param alias name(s) of the population(s) to remove (e.g. "Single Cells"). By
 #'   default all descendant populations will be removed as well.
+#' @param channels names of the channel(s) used to gate the population. This
+#'   argument is not necessary but is included to allow conversion of
+#'   \code{gate_draw} code to \code{gate_remove} code by simply changing
+#'   \code{"draw"} to \code{"remove"}.
+#' @param type gate type(s) used to for the gates to be removed. This argument
+#'   is not necessary but is included to allow conversion of \code{gate_draw}
+#'   code to \code{gate_remove} code by simply changing \code{"draw"} to
+#'   \code{"remove"}.
 #' @param gatingTemplate name of the \code{gatingTemplate} csv file (e.g.
 #'   "gatingTemplate.csv").
+#' @param ... additional \code{gate_draw} arguments that will be ignored.
 #'
-#' @return an object of class \code{gatingSet} with gate and children removed,
-#'   as well as gatingTemplate file with population removed.
+#' @return an object of class \code{GatingSet} with gate and children removed
+#'   and updated gatingTemplate to reflect these changes.
 #'
 #' @importFrom flowWorkspace getDescendants Rm getNodes
 #' @importFrom utils read.csv write.csv
@@ -17,29 +30,32 @@
 #' @examples
 #' \dontrun{
 #' library(CytoRSuiteData)
-#' 
+#'
 #' # Load in samples
 #' fs <- Activation
 #' gs <- GatingSet(fs)
-#' 
+#'
 #' # Apply compensation
 #' gs <- compensate(gs, fs[[1]]@description$SPILL)
-#' 
+#'
 #' # Transform fluorescent channels
 #' trans <- estimateLogicle(gs[[4]], cyto_fluor_channels(gs))
 #' gs <- transform(gs, trans)
-#' 
+#'
 #' # Gate using gate_draw
 #' gt <- Activation_gatingTemplate
 #' gating(gt, gs)
-#' 
+#'
 #' # Remove T Cells population - replace gatingTemplate name
 #' gate_remove(gs, "T Cells", gatingTemplate = "gatingTemplate.csv")
 #' }
 #' @export
 gate_remove <- function(gs,
+                        parent = NULL,
                         alias = NULL,
-                        gatingTemplate = NULL) {
+                        channels = NULL,
+                        type = NULL,
+                        gatingTemplate = NULL, ...) {
 
   # Supply alias
   if (is.null(alias)) {
@@ -185,23 +201,28 @@ gate_extract <- function(parent,
 #' Edit Existing Gate(s).
 #'
 #' @param x an object of class \code{GatingSet}.
-#' @param select vector containing the indicies of samples within gs to use for
-#'   plotting.
+
 #' @param parent name of the parental population.
 #' @param alias name(s) of the gate to edit (e.g. "Single Cells").
-#' @param overlay name(s) of the population(s) to overlay onto the plot.
+#' @param channels name(s) of the channel(s) used to construct the gate(s). This
+#'   argument is not necessary but is included to allow conversion of
+#'   \code{gate_draw} code to \code{gate_remove} code by simply changing
+#'   \code{"draw"} to \code{"remove"}.
 #' @param type vector of gate type names used to construct the gates. Multiple
-#'   \code{types} are supported but should be accompanied with an
-#'   \code{alias} argument of the same length (i.e. one \code{type} per
-#'   \code{alias}). Supported \code{gate_types} are \code{polygon, rectangle,
-#'   ellipse, threshold, boundary, interval, quadrant and web} which can be
-#'   abbreviated as upper or lower case first letters as well. Default
-#'   \code{type} is \code{"polygon"}.
+#'   \code{types} are supported but should be accompanied with an \code{alias}
+#'   argument of the same length (i.e. one \code{type} per \code{alias}).
+#'   Supported \code{gate_types} are \code{polygon, rectangle, ellipse,
+#'   threshold, boundary, interval, quadrant and web} which can be abbreviated
+#'   as upper or lower case first letters as well. Default \code{type} is
+#'   \code{"polygon"}.
 #' @param gatingTemplate name of the \code{gatingTemplate} csv file (e.g.
 #'   "gatingTemplate.csv") where the gate is saved.
 #' @param display numeric [0,1] to control the percentage of events to be
 #'   plotted. Specifying a value for \code{display} can substantial improve
 #'   plotting speed for less powerful machines.
+#' @param select vector containing the indicies of samples within gs to use for
+#'   plotting.
+#' @param overlay name(s) of the population(s) to overlay onto the plot.
 #' @param ... additional arguments passed to cyto_plot, see ?cyto_plot for
 #'   details.
 #'
@@ -221,22 +242,22 @@ gate_extract <- function(parent,
 #' @examples
 #' \dontrun{
 #' library(CytoRSuiteData)
-#' 
+#'
 #' # Load in samples
 #' fs <- Activation
 #' gs <- GatingSet(fs)
-#' 
+#'
 #' # Apply compensation
 #' gs <- compensate(gs, fs[[1]]@description$SPILL)
-#' 
+#'
 #' # Transform fluorescent channels
 #' trans <- estimateLogicle(gs[[4]], cyto_fluor_channels(gs))
 #' gs <- transform(gs, trans)
-#' 
+#'
 #' # Gate using gate_draw
 #' gt <- Activation_gatingTemplate
 #' gating(gt, gs)
-#' 
+#'
 #' # Edit CD4 T Cells Gate - replace gatingTemplate name
 #' gate_edit(gs,
 #'   parent = "T Cells",
@@ -244,16 +265,17 @@ gate_extract <- function(parent,
 #'   gatingTemplate = "gatingTemplate.csv"
 #' )
 #' }
-#' 
+#'
 #' @export
 gate_edit <- function(x,
-                      select = NULL,
                       parent = NULL,
                       alias = NULL,
-                      overlay = NULL,
+                      channels = NULL,
                       type = NULL,
                       gatingTemplate = NULL,
-                      display = NULL, ...) {
+                      display = NULL,
+                      select = NULL,
+                      overlay = NULL, ...) {
 
   # Parent
   if (is.null(parent)) {
