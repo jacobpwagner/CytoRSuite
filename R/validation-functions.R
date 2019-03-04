@@ -647,7 +647,7 @@ setMethod(.cyto_overlay_check,
         )
       }
       overlay <- list(overlay)
-    } else if (inherits(x, "flowSet")) {
+    } else if (inherits(overlay, "flowSet")) {
       if (!is.null(display) & getOption("CytoRSuite_overlay_display")) {
         overlay <- fsApply(overlay, function(x) {
           Subset(x, sampleFilter(size = display * BiocGenerics::nrow(x)))

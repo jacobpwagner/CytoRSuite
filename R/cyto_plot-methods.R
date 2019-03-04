@@ -1651,7 +1651,6 @@ setMethod(cyto_plot,
           overlay = overlay,
           display = NULL
         )
-        print(overlay)
         
         overlay <- .cyto_overlay_merge(
           x = gs,
@@ -1659,7 +1658,6 @@ setMethod(cyto_plot,
           group_by = group_by,
           display = NULL
         )
-        print(overlay)
         
       }
 
