@@ -1651,12 +1651,16 @@ setMethod(cyto_plot,
           overlay = overlay,
           display = NULL
         )
+        print(overlay)
+        
         overlay <- .cyto_overlay_merge(
           x = gs,
           overlay = overlay,
           group_by = group_by,
           display = NULL
         )
+        print(overlay)
+        
       }
 
       # Convert merged flowFrame list to flowSet

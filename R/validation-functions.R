@@ -647,7 +647,7 @@ setMethod(.cyto_overlay_check,
         )
       }
       overlay <- list(overlay)
-    } else if (class(overlay) == "flowSet") {
+    } else if (inherits(x, "flowSet")) {
       if (!is.null(display) & getOption("CytoRSuite_overlay_display")) {
         overlay <- fsApply(overlay, function(x) {
           Subset(x, sampleFilter(size = display * BiocGenerics::nrow(x)))
@@ -663,7 +663,8 @@ setMethod(.cyto_overlay_check,
       }
 
       overlay <- overlay
-    } else if (all(unlist(lapply(overlay, class)) == "flowSet") &
+    } else if (all(unlist(lapply(overlay, function(x) {
+      inherits(x, "flowSet")}))) &
       length(overlay) == 1) {
       if (!is.null(display) & getOption("CytoRSuite_overlay_display")) {
         overlay <- lapply(overlay, function(x) {
@@ -713,7 +714,7 @@ setMethod(.cyto_overlay_check,
 
     # Assign x to fs
     fs <- x
-
+    
     # Check overlay class
     if (class(overlay) == "flowFrame") {
       if (!is.null(display) & getOption("CytoRSuite_overlay_display")) {
@@ -722,13 +723,13 @@ setMethod(.cyto_overlay_check,
       }
 
       overlay <- lapply(rep(list(overlay), length(fs)), "list")
-    } else if (class(overlay) == "flowSet") {
+    } else if (inherits(overlay, "flowSet")) {
       if (!is.null(display) & getOption("CytoRSuite_overlay_display")) {
         overlay <- fsApply(overlay, function(x) {
           Subset(x, sampleFilter(size = display * BiocGenerics::nrow(x)))
         })
       }
-
+      
       overlay <- lapply(lapply(
         seq(1, length(overlay), 1),
         function(x) overlay[[x]]
@@ -749,7 +750,9 @@ setMethod(.cyto_overlay_check,
           Subset(x, sampleFilter(size = display * BiocGenerics::nrow(x)))
         })
       }
-    } else if (all(unlist(lapply(overlay, class)) == "flowSet")) {
+    } else if (all(unlist(lapply(overlay, function(x){
+      inherits(x, "flowSet")})))) {
+      
       if (!all(unlist(lapply(overlay, length)) == length(fs))) {
         stop(paste("Each flowSet in supplied list should be of the", 
            "same length as the supplied flowSet.", sep = " "))
@@ -897,7 +900,7 @@ setMethod(.cyto_overlay_check,
         names(overlay) <- nms
       }
     }
-
+    
     # .cyto_overlay_check to convert overlay to correct format
     .cyto_overlay_check(fs,
       overlay = overlay,
