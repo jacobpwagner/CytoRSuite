@@ -11,7 +11,7 @@ status](https://travis-ci.org/DillonHammill/CytoRSuite.svg?branch=master)](https
 [![Coverage
 status](https://codecov.io/gh/DillonHammill/CytoRSuite/branch/master/graph/badge.svg)](https://codecov.io/github/DillonHammill/CytoRSuite?branch=master)
 [![lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
-[![Last-changedate](https://img.shields.io/badge/last%20change-2019--02--27-yellowgreen.svg)](/commits/master)
+[![Last-changedate](https://img.shields.io/badge/last%20change-2019--03--03-yellowgreen.svg)](/commits/master)
 [![](https://badges.ropensci.org/281_status.svg)](https://github.com/ropensci/software-review/issues/281)
 
 **CytoRSuite** is designed to provide an interactive interface for the
@@ -143,7 +143,7 @@ described below:
               gatingTemplate = "Compensation-gatingTemplate.csv")
     ```
     
-    ![](man/figures/README-unnamed-chunk-6-1.png)<!-- -->
+    <img src="man/figures/README-Compensation-gates.png" width="100%" height="100%" style="display: block; margin: auto;" />
     
     1.4 Compute fluorescent spillover matrix using `spillover_compute`
     
