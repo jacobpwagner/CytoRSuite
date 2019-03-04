@@ -1019,8 +1019,10 @@ setMethod(cyto_plot,
 #'   alias = "CD69+ CD4 T Cells",
 #'   channels = "7-AAD-A"
 #' )
+#' 
 #' @importFrom flowWorkspace getGate getData sampleNames getTransformations
 #'   getNodes
+#' @importFrom openCyto templateGen
 #'
 #' @seealso \code{\link{cyto_plot,flowFrame-method}}
 #' @seealso \code{\link{cyto_plot,flowSet-method}}
@@ -1116,6 +1118,12 @@ setMethod(cyto_plot,
 
     # Check supplied alias exists in GatingSHierarchy
     if (!is.null(alias)) {
+      # Plot all appropriate gates if alias is an empty character string
+      if(all(alias == "")){
+        gt <- templateGen(gh)
+        alias <- gt$alias[gt$dims == paste(channels, collapse = ",")]
+      }
+      
       if (!all(alias %in% basename(getNodes(gh)))) {
         stop("Supplied alias does not exist in the GatingHierarchy")
       }
@@ -1466,6 +1474,7 @@ setMethod(cyto_plot,
 #' @importFrom flowWorkspace getGate getData sampleNames getTransformations
 #'   sampleNames pData getNodes
 #' @importFrom flowCore flowSet
+#' @importFrom openCyto templateGen
 #'
 #' @seealso \code{\link{cyto_plot,flowFrame-method}}
 #' @seealso \code{\link{cyto_plot,flowSet-method}}
@@ -1558,6 +1567,12 @@ setMethod(cyto_plot,
 
     # Check supplied alias exists in GatingSet
     if (!missing(alias)) {
+      # Plot all appropriate gates if alias is an empty character string
+      if(all(alias == "")){
+        gt <- templateGen(x[[1]])
+        alias <- gt$alias[gt$dims == paste(channels, collapse = ",")]
+      }
+      
       if (!all(alias %in% basename(getNodes(x)))) {
         stop("Supplied alias does not exist in the GatingSet.")
       }
