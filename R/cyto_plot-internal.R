@@ -2150,7 +2150,7 @@ setGeneric(
 #' )
 #' }
 #' 
-#' @importFrom flowCore exprs parameters fsApply
+#' @importFrom flowCore exprs parameters fsApply filter rectangleGate Subset
 #' @importFrom flowWorkspace pData
 #' @importFrom MASS kde2d
 #' @importFrom graphics plot axis title abline polygon contour legend points par
@@ -2225,6 +2225,18 @@ setMethod(.cyto_plot_2d,
     # All channels
     fr.channels <- BiocGenerics::colnames(fr)
 
+    # FSC/SSC bug with -ve values
+    if(any(channels %in% c("FSC-A","SSC-A"))){
+      if("FSC-A" %in% channels){
+        nonDebris <- filter(fr, rectangleGate("FSC-A" = c(0, Inf)))
+        fr <- Subset(fr, nonDebris)
+      }
+      if("SSC-A" %in% channels){
+        nonDebris <- filter(fr, rectangleGate("SSC-A" = c(0, Inf)))
+        fr <- Subset(fr, nonDebris)
+      }
+    }
+    
     # Check channels
     channels <- cyto_channel_check(fr,
       channels = channels,
@@ -3002,7 +3014,7 @@ setMethod(.cyto_plot_2d,
 #' )
 #' }
 #' 
-#' @importFrom flowCore exprs parameters fsApply
+#' @importFrom flowCore exprs parameters fsApply filter rectangleGate Subset
 #' @importFrom flowWorkspace pData sampleNames
 #' @importFrom graphics plot axis title abline polygon contour legend points par
 #' @importFrom grDevices densCols colorRampPalette n2mfrow
@@ -3073,6 +3085,18 @@ setMethod(.cyto_plot_2d,
     # Assign x to fr
     fs <- x
 
+    # FSC/SSC bug with -ve values
+    if(any(channels %in% c("FSC-A","SSC-A"))){
+      if("FSC-A" %in% channels){
+        nonDebris <- filter(fs, rectangleGate("FSC-A" = c(0, Inf)))
+        fs <- Subset(fs, nonDebris)
+      }
+      if("SSC-A" %in% channels){
+        nonDebris <- filter(fs, rectangleGate("SSC-A" = c(0, Inf)))
+        fs <- Subset(fs, nonDebris)
+      }
+    }
+    
     # Label text supplied turn on labels
     if(!all(is.na(label_text))){
       label <- TRUE
