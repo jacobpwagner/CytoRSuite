@@ -372,11 +372,29 @@ setMethod(cyto_plot_gating_scheme,
 
     # Calculate layout parameters based on number of parents
     if (missing(layout)) {
-      layout <- c(
-        n2mfrow(np + 1)[2],
-        n2mfrow(np + 1)[1]
-      )
+      if(legend == FALSE){
+        layout <- c(
+          n2mfrow(np)[2],
+          n2mfrow(np)[1]
+        )
+      }else{
+        if(back_gate == FALSE){
+          layout <- c(
+            n2mfrow(np)[2],
+            n2mfrow(np)[1]
+          )
+        }else{
+          layout <- c(
+            n2mfrow(np + 1)[2],
+            n2mfrow(np + 1)[1]
+          )
+        }
+      }
       par(mfrow = layout)
+    }else{
+      if(layout[1] != FALSE){
+        par(mfrow = layout)
+      }
     }
 
     if (!is.null(header)) {
@@ -960,13 +978,29 @@ setMethod(cyto_plot_gating_scheme,
 
       # Calculate layout parameters based on number of parents
       if (is.null(layout)) {
-        layout <- c(
-          n2mfrow(np + 1)[2],
-          n2mfrow(np + 1)[1]
-        )
+        if(legend == FALSE){
+          layout <- c(
+            n2mfrow(np)[2],
+            n2mfrow(np)[1]
+          )
+        }else{
+          if(back_gate == FALSE){
+            layout <- c(
+              n2mfrow(np)[2],
+              n2mfrow(np)[1]
+            )
+          }else{
+            layout <- c(
+              n2mfrow(np + 1)[2],
+              n2mfrow(np + 1)[1]
+            )
+          }
+        }
         par(mfrow = layout)
-      } else if (layout[1] != FALSE) {
-        par(mfrow = layout)
+      }else{
+        if(layout[1] != FALSE){
+          par(mfrow = layout)
+        }
       }
 
       if (!is.null(header)) {
