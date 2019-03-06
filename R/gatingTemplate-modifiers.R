@@ -453,6 +453,9 @@ gate_edit <- function(x,
       }
     }
 
+    # Turn off overlay sampling
+    options("CytoRSuite_overlay_display" = FALSE)
+    
     # Extract gate(s) for plotting
     gates <- filters(lapply(alias, function(x) {
       getGate(grp[[1]], x)
@@ -514,6 +517,9 @@ gate_edit <- function(x,
       )
     }
 
+    # Reset overlay sampling
+    options("CytoRSuite_overlay_display" = TRUE)
+    
     # If no type supplied determine using gate_type
     if (is.null(type)) {
       type <- gate_type(gates)
