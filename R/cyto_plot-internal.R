@@ -405,19 +405,8 @@ setMethod(.cyto_plot_1d,
       legend_text <- names(frs)
     }
 
-    # Supported gates
-    typ <- c("rectangleGate", "filters")
-    if (class(gate) %in% typ) {
-      gates <- length(gate)
-    } else if (inherits(gate, "list")) {
-      if (all(unlist(lapply(gate, "class")) %in% typ)) {
-        gates <- length(gate)
-      } else if (all(unlist(lapply(gate, "class")) == "list")) {
-        gates <- length(gate[[1]])
-      }
-    } else if (!.valid_gates(gate, channel)) {
-      gates <- 0
-    }
+    # Number of supported gates
+    gates <- .cyto_gate_count(gate)
 
     # Get named list of arguments
     args <- as.list(environment())
@@ -805,22 +794,17 @@ setMethod(.cyto_plot_1d,
       }
     }
 
-    # Valid gates supplied?
-    valid_gates <- .valid_gates(gate, channel)
-
     # Gates - no overlay
     if (is.null(overlay)) {
-      if (valid_gates) {
         gate <- cyto_plot_gate(gate,
           channels = channel,
           gate_line_col = args[["gate_line_col"]],
           gate_line_width = args[["gate_line_width"]],
           gate_line_type = args[["gate_line_type"]]
         )
-      }
 
       # Labels
-      if (valid_gates & args[["label"]]) {
+      if (args[["label"]]) {
 
         # Population names missing - show percantage only
         suppressMessages(cyto_plot_label(
@@ -836,7 +820,7 @@ setMethod(.cyto_plot_1d,
           box_alpha = args[["label_box_alpha"]]
         ))
       }
-    } else if (!is.null(overlay) & args[["density_stack"]] != 0 & valid_gates) {
+    } else if (!is.null(overlay) & args[["density_stack"]] != 0) {
       .cyto_overlay_gate(
         x = fr,
         channel = channel,
@@ -856,12 +840,12 @@ setMethod(.cyto_plot_1d,
         gate_line_width = args[["gate_line_width"]],
         gate_line_type = args[["gate_line_type"]]
       )
-    } else if (!is.null(overlay) & args[["density_stack"]] == 0 & valid_gates) {
+    } else if (!is.null(overlay) & args[["density_stack"]] == 0) {
       message("Gating overlays without stacking is not supported.")
     }
 
     # No gates - labels
-    if (!valid_gates & !all(is.na(args[["label_text"]])) & args[["label"]]) {
+    if (!all(is.na(args[["label_text"]])) & args[["label"]]) {
       if (is.null(overlay)) {
 
         # label # limited to # layers - arg_split
@@ -1247,9 +1231,7 @@ setMethod(.cyto_plot_1d,
           }
 
           # Gates
-          if (.valid_gates(gate, channel)) {
-            gate <- .cyto_gate_check(gate, length(fr.lst))
-          }
+          gate <- .cyto_gate_check(gate, length(fr.lst))
 
           # Stacking - one panel
         } else {
@@ -1276,9 +1258,7 @@ setMethod(.cyto_plot_1d,
           }
 
           # Gates
-          if (.valid_gates(gate, channel)) {
-            gate <- .cyto_gate_check(gate, 1)
-          }
+          gate <- .cyto_gate_check(gate, 1)
         }
 
         # Overlay - separate panels with overlay
@@ -1314,9 +1294,7 @@ setMethod(.cyto_plot_1d,
         }
 
         # Gates
-        if (.valid_gates(gate, channel)) {
-          gate <- .cyto_gate_check(gate, length(fr.lst))
-        }
+        gate <- .cyto_gate_check(gate, length(fr.lst))
       }
     } else if (group_by[1] == FALSE) {
 
@@ -1344,9 +1322,7 @@ setMethod(.cyto_plot_1d,
           }
 
           # Gates
-          if (.valid_gates(gate, channel)) {
-            gate <- .cyto_gate_check(gate, length(fr.lst))
-          }
+          gate <- .cyto_gate_check(gate, length(fr.lst))
 
           # Stacking - one panel
         } else {
@@ -1363,9 +1339,7 @@ setMethod(.cyto_plot_1d,
           }
 
           # Gates
-          if (.valid_gates(gate, channel)) {
-            gate <- .cyto_gate_check(gate, 1)
-          }
+          gate <- .cyto_gate_check(gate, 1)
         }
 
         # Overlay - separate panels with overlay
@@ -1388,12 +1362,10 @@ setMethod(.cyto_plot_1d,
         }
 
         # Gates
-        if (.valid_gates(gate, channel)) {
-          gate <- .cyto_gate_check(
-            gate,
-            length(fr.lst)
-          )
-        }
+        gate <- .cyto_gate_check(
+          gate,
+          length(fr.lst)
+        )
 
         # Layout
         layout <- .cyto_plot_layout(
@@ -1434,18 +1406,7 @@ setMethod(.cyto_plot_1d,
     }
     
     # Number of gates
-    typ <- c("rectangleGate", "filters")
-    if (class(gate) %in% typ) {
-      gates <- length(gate)
-    } else if (inherits(gate, "list")) {
-      if (all(unlist(lapply(gate, "class")) %in% typ)) {
-        gates <- length(gate)
-      } else if (all(unlist(lapply(gate, "class")) == "list")) {
-        gates <- length(gate[[1]])
-      }
-    } else if (!.valid_gates(gate, channel)) {
-      gates <- 0
-    }
+    gates <- .cyto_gate_count(gate)
 
     # Split arguments & plot
     if (is.null(overlay)) {
@@ -3920,4 +3881,35 @@ setMethod(.cyto_plot_2d,
   }
 
   return(valid_gates)
+}
+
+#' Get number of gates supplied to cyto_plot
+#' @param x gate object, filters object or list object.
+#' @return number of gate objects in x.
+#' @noRd
+.cyto_gate_count <- function(x){
+  
+  # Gate objects
+  typ <- c("rectangleGate","polygonGate","ellipsoidGate","filters")
+  if(is.null(x)){
+    cnt <- 0
+  }else if(class(x) %in% typ[-4]){
+    cnt <- 1
+  }else if(inherits(x, typ[4])){
+    cnt <- length(x)
+  }else if(class(x) == "list"){
+    # list of gate objects
+    if(all(unlist(lapply(x, "class")) %in% typ)) {
+      cnt <- sum(unlist(lapply(x, "length")))
+    # list of lists
+    }else if(all(unlist(lapply(x, "class")) == "list")){
+      cnt <- 0
+      lapply(x, function(y){
+        cnt <<- cnt + sum(unlist(lappy(x, "length")))
+      })
+    }
+  }else{
+    cnt <- 0
+  }
+  return(cnt)
 }

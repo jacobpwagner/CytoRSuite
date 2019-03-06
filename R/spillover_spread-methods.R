@@ -119,7 +119,7 @@ setMethod(
       }
     
       # Apply compensation
-      if (inherits(fs, "ncdfFlowSet") == TRUE) {
+      if (inherits(fs, "ncdfFlowSet")) {
         fs <- suppressMessages(ncfsApply(fs, function(fr) {
           compensate(fr, spill)
         }))
@@ -321,13 +321,38 @@ setMethod(
     # Make matrix
     SSM <- do.call("rbind", SSM)
     
-    # Replace diagonal with zero
+    # Replace diagonal with NA
     lapply(seq(1, nrow(SSM), 1), function(x) {
-      SSM[x, match(rownames(SSM)[x], colnames(SSM))] <<- 0
+      SSM[x, match(rownames(SSM)[x], colnames(SSM))] <<- NA
     })
     
+    # Sort SSM by column names
+    ind <- na.omit(match(colnames(SSM), rownames(SSM)))
+    SSM <- SSM[ind, ]
+
+    # Turn off pop-up graphics device
+    graphics.off()
+    dev.new()
+    
+    # Heatmap label size
+    ylab_width <- max(nchar(rownames(SSM))) * 0.02
+    xlab_width <- max(nchar(colnames(SSM))) * 0.04               
+    
     # Plot heatmap
-    stats::heatmap(SSM, scale = "none")
+    superheat::superheat(SSM,
+                         title = "Spillover Spreading Matrix \n",
+                         title.size = 6,
+                         title.alignment = "center",
+                         bottom.label.text.angle = 90,
+                         left.label.size = ylab_width,
+                         bottom.label.size = xlab_width,
+                         left.label.text.alignment = "center",
+                         legend.height = 0.2,
+                         legend.vspace = 0.2,
+                         row.title = "Fluorochrome \n",
+                         row.title.size = 6,
+                         heat.na.col = "white",
+                         heat.pal =)
     
     # Write to csv file
     if (!inherits(spillover_spread, "character")) {

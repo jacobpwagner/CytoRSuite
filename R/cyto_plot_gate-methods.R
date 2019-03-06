@@ -120,7 +120,7 @@ setMethod(cyto_plot_gate,
       channels <- as.vector(parameters(gt))
     }
 
-    # 2D gatre in 1D
+    # 2D gate in 1D
     if (length(channels) == 1 & length(parameters(gt)) == 2) {
       gt <- gt[channels]
     }
@@ -248,7 +248,7 @@ setMethod(cyto_plot_gate,
 #'
 #' @return gate object with modified co-ordinates for plotting.
 #'
-#' @importFrom flowCore parameters
+#' @importFrom flowCore parameters rectangleGate
 #' @importFrom graphics par points polygon
 #'
 #' @author Dillon Hammill, \email{Dillon.Hammill@anu.edu.au}
@@ -306,64 +306,96 @@ setMethod(cyto_plot_gate,
       channels <- as.vector(parameters(gt))
     }
 
-    if (!all(as.vector(parameters(gt)) %in% channels)) {
-      stop(paste(
-        "Channels argument should contain",
-        paste(parameters(gt), collapse = " & "),
-        "to plot supplied gate(s)."
-      ))
-    }
+    # Allow plotting ploygonGate in 1D plot - use min/max coords in channel
+    if(length(channels) == 1){
+      
+      # Gate not constructed using supplied channel
+      if(!any(as.vector(parameters(gt)) %in% channels)){
+        stop(
+          paste("Supplied gate does not have co-ordinates in", channels, ".")
+          )
+      }else{
+        coords <- range(gt@boundaries[, parameters(gt) %in% channels])
+        coords <- matrix(coords, 
+                         dimnames = list(c("min","max"),channels),
+                         ncol = 1, 
+                         nrow = 2)
+        gt <- rectangleGate(filterId = gt@filterId, .gate = coords)
+        
+        # Call to rectangleGate method
+        cyto_plot_gate(gt,
+                       channels = channels,
+                       gate_line_col = gate_line_col,
+                       gate_line_width = gate_line_width,
+                       gate_line_type = gate_line_type,
+                       gate_point = gate_point,
+                       gate_point_shape = gate_point_shape,
+                       gate_point_size = gate_point_size)
+        
+      }
+      
+    }else{
+      
+      # Parameters of gate must match channels of plot
+      if (!all(as.vector(parameters(gt)) %in% channels)) {
+        stop(paste(
+          "Channels argument should contain",
+          paste(parameters(gt), collapse = " & "),
+          "to plot supplied gate(s)."
+        ))
+      }
 
-    # Replace Inf values with plot limits
-    if (!all(is.finite(gt@boundaries))) {
-      cnt <- 0
-      lapply(seq_along(channels), function(x) {
-        cnt <<- cnt + 1
+      # Replace Inf values with plot limits
+      if (!all(is.finite(gt@boundaries))) {
+        cnt <- 0
+        lapply(seq_along(channels), function(x) {
+          cnt <<- cnt + 1
 
-        if (any(!is.finite(gt@boundaries[, channels[x]]) &
-          any(gt@boundaries[, channels[x]] < 0))) {
-          if (cnt == 1) {
-            ind <- which(gt@boundaries[, channels[x]] < 0)
-            gt@boundaries[, channels[x]][ind] <<- par("usr")[1]
-          } else if (cnt == 2) {
-            ind <- which(gt@boundaries[, channels[x]] < 0)
-            gt@boundaries[, channels[x]][ind] <<- par("usr")[3]
+          if (any(!is.finite(gt@boundaries[, channels[x]]) &
+            any(gt@boundaries[, channels[x]] < 0))) {
+            if (cnt == 1) {
+              ind <- which(gt@boundaries[, channels[x]] < 0)
+              gt@boundaries[, channels[x]][ind] <<- par("usr")[1]
+            } else if (cnt == 2) {
+              ind <- which(gt@boundaries[, channels[x]] < 0)
+              gt@boundaries[, channels[x]][ind] <<- par("usr")[3]
+            }
           }
-        }
 
-        if (any(!is.finite(gt@boundaries[, channels[x]]) &
-          any(!gt@boundaries[, channels[x]] < 0))) {
-          if (cnt == 1) {
-            ind <- which(!is.finite(gt@boundaries[, channels[x]]) &
-              !gt@boundaries[, channels[x]] < 0)
-            gt@boundaries[, channels[x]][ind] <<- par("usr")[2]
-          } else if (cnt == 2) {
-            ind <- which(!is.finite(gt@boundaries[, channels[x]]) &
-              !gt@boundaries[, channels[x]] < 0)
-            gt@boundaries[, channels[x]][ind] <<- par("usr")[4]
+          if (any(!is.finite(gt@boundaries[, channels[x]]) &
+            any(!gt@boundaries[, channels[x]] < 0))) {
+            if (cnt == 1) {
+              ind <- which(!is.finite(gt@boundaries[, channels[x]]) &
+                !gt@boundaries[, channels[x]] < 0)
+              gt@boundaries[, channels[x]][ind] <<- par("usr")[2]
+            } else if (cnt == 2) {
+              ind <- which(!is.finite(gt@boundaries[, channels[x]]) &
+                !gt@boundaries[, channels[x]] < 0)
+              gt@boundaries[, channels[x]][ind] <<- par("usr")[4]
+            }
           }
-        }
-      })
-    }
+        })
+      }
 
-    # Plot Gate
-    if (gate_point == TRUE) {
-      points(
-        x = c(gt@boundaries[, channels[1]]),
-        y = c(gt@boundaries[, channels[2]]),
-        pch = gate_point_shape,
-        col = gate_line_col,
-        cex = gate_point_size
+      # Plot Gate
+      if (gate_point == TRUE) {
+        points(
+          x = c(gt@boundaries[, channels[1]]),
+          y = c(gt@boundaries[, channels[2]]),
+          pch = gate_point_shape,
+          col = gate_line_col,
+          cex = gate_point_size
+        )
+      }
+
+      polygon(gt@boundaries[, channels[1]],
+        gt@boundaries[, channels[2]],
+        border = gate_line_col,
+        lwd = gate_line_width,
+        lty = gate_line_type
       )
     }
-
-    polygon(gt@boundaries[, channels[1]],
-      gt@boundaries[, channels[2]],
-      border = gate_line_col,
-      lwd = gate_line_width,
-      lty = gate_line_type
-    )
-
+    
     invisible(gt)
   }
 )
@@ -448,26 +480,57 @@ setMethod(cyto_plot_gate,
     if (missing(channels)) {
       channels <- as.vector(parameters(gt))
     }
+    
+    # Allow plotting ploygonGate in 1D plot - use min/max coords in channel
+    if(length(channels) == 1){
+      
+      # Gate not constructed using supplied channel
+      if(!any(as.vector(parameters(gt)) %in% channels)){
+        stop(
+          paste("Supplied gate does not have co-ordinates in", channels, ".")
+        )
+      }else{
+        # convert ellipsoidGate into polygonGate
+        gt <- as(gt, "polygonGate")
+        coords <- range(gt@boundaries[, parameters(gt) %in% channels])
+        coords <- matrix(coords, 
+                         dimnames = list(c("min","max"),channels),
+                         ncol = 1, 
+                         nrow = 2)
+        gt <- rectangleGate(filterId = gt@filterId, .gate = coords)
+        
+        # Call to rectangleGate method
+        cyto_plot_gate(gt,
+                       channels = channels,
+                       gate_line_col = gate_line_col,
+                       gate_line_width = gate_line_width,
+                       gate_line_type = gate_line_type,
+                       gate_point = gate_point,
+                       gate_point_shape = gate_point_shape,
+                       gate_point_size = gate_point_size)
+        
+      }
+      
+    }else{
+      if (!all(as.vector(parameters(gt)) %in% channels)) {
+        stop(paste(
+          "Channels argument should contain",
+          paste(parameters(gt), collapse = " & "),
+          "to plot supplied gate(s)."
+        ))
+      }
 
-    if (!all(as.vector(parameters(gt)) %in% channels)) {
-      stop(paste(
-        "Channels argument should contain",
-        paste(parameters(gt), collapse = " & "),
-        "to plot supplied gate(s)."
-      ))
+      # Coerce to polygonGate
+      gt <- as(gt, "polygonGate")
+
+      # Plot gate
+      polygon(gt@boundaries[, channels[1]],
+        gt@boundaries[, channels[2]],
+        border = gate_line_col,
+        lwd = gate_line_width,
+        lty = gate_line_type
+      )
     }
-
-    # Coerce to polygonGate
-    gt <- as(gt, "polygonGate")
-
-    # Plot gate
-    polygon(gt@boundaries[, channels[1]],
-      gt@boundaries[, channels[2]],
-      border = gate_line_col,
-      lwd = gate_line_width,
-      lty = gate_line_type
-    )
-
     invisible(gt)
   }
 )
