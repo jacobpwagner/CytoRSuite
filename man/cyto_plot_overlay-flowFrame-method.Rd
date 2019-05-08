@@ -43,7 +43,7 @@ trans <- estimateLogicle(gs[[4]], cyto_fluor_channels(gs))
 gs <- transform(gs, trans)
 
 # Gate using gate_draw
-gating(Activation_gatingTemplate, gs)
+gt_gating(Activation_gatingTemplate, gs)
 
 # Plot
 cyto_plot(gs[[4]],
@@ -53,7 +53,7 @@ cyto_plot(gs[[4]],
 )
 
 # Overlay CD4 T Cells
-cyto_plot_overlay(getData(gs, "CD4 T Cells")[[4]],
+cyto_plot_overlay(gs_pop_get_data(gs, "CD4 T Cells")[[4]],
   channels = c("APC-Cy7-A", "PE-A"),
   point_col = "magenta"
 )

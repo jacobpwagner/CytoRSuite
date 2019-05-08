@@ -84,7 +84,7 @@ gs <- GatingSet(fs)
 
 # Gate single cells using gate_draw
 gt <- Compensation_gatingTemplate
-gating(gt, gs)
+gt_gating(gt, gs)
 
 # Channel match file
 cmfile <- system.file("extdata",
@@ -93,7 +93,7 @@ cmfile <- system.file("extdata",
 )
 
 # Edit spillover matrix
-spillover_edit(getData(gs, "Single Cells"),
+spillover_edit(gs_pop_get_data(gs, "Single Cells"),
   channel_match = cmfile
 )
 }

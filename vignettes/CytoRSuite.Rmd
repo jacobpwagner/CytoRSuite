@@ -311,7 +311,7 @@ To finish things off lets make a similar gate on the CD8 T Cells as well. This t
 
 ```{r, eval = FALSE}
 # Extract the CD8 T Cells from Sample 1 for overlay
-CD8 <- getData(gs, "CD8 T Cells")[[1]]
+CD8 <- gs_pop_get_data(gs, "CD8 T Cells")[[1]]
 
 # CD69+ CD8 T Cells
 gate_draw(gs, 
@@ -326,7 +326,7 @@ gate_draw(gs,
 ```
 
 ```{r, echo = FALSE, eval = TRUE, fig.height = 6, fig.width = 6, fig.align = "center"}
-CD8 <- getData(gs, "CD8 T Cells")[[1]]
+CD8 <- gs_pop_get_data(gs, "CD8 T Cells")[[1]]
 
 cyto_plot(gs, parent = "CD8 T Cells", alias = "CD69+ CD8 T Cells", channels = c("CD44","CD69"), overlay = CD8,  group_by = TRUE, contour_lines = 15)
 ```
@@ -357,7 +357,7 @@ gt <- gatingTemplate("Example-gatingTemplate.csv")
 gating(gt, gs)
 
 # Check gates have been applied
-getNodes(gs)
+gs_get_pop_paths(gs)
 ```
 
 ```{r, eval = TRUE,, echo = FALSE, message = FALSE, fig.keep = 'none'}
@@ -374,7 +374,7 @@ gs <- transform(gs, trans)
 gating(Activation_gatingTemplate, gs)
 
 # Check gates have been applied
-getNodes(gs)
+gs_get_pop_paths(gs)
 ```
 
 ```{r,eval = TRUE, fig.height = 7, fig.width = 7, fig.align="center"}

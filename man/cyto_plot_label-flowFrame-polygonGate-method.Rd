@@ -75,7 +75,7 @@ trans <- estimateLogicle(gs[[4]], cyto_fluor_channels(fs))
 gs <- transform(gs, trans)
 
 # Gate using gate_draw
-gating(Activation_gatingTemplate, gs)
+gt_gating(Activation_gatingTemplate, gs)
 
 # Plot
 cyto_plot(gs[[4]],
@@ -84,13 +84,13 @@ cyto_plot(gs[[4]],
 )
 
 # Cells gate
-gt <- getGate(gs, "Cells")[[1]]
+gt <- gs_pop_get_gate(gs, "Cells")[[1]]
 cyto_plot_gate(gt,
   channels = c("FSC-A", "SSC-A")
 )
 
 # Labels
-cyto_plot_label(getData(gs, "root")[[4]],
+cyto_plot_label(gs_pop_get_data(gs, "root")[[4]],
   gates = gt,
   trans = trans,
   channels = c("FSC-A", "SSC-A"),

@@ -67,10 +67,10 @@ setGeneric(
 #' 
 #' # Gate using gate_draw
 #' gt <- Activation_gatingTemplate
-#' gating(gt, gs)
+#' gt_gating(gt, gs)
 #' 
 #' # Plot expression profile in all channels
-#' cyto_plot_profile(getData(gs, "T Cells")[[4]],
+#' cyto_plot_profile(gs_pop_get_data(gs, "T Cells")[[4]],
 #'   axes_trans = trans
 #' )
 #' @export
@@ -196,10 +196,10 @@ setMethod(cyto_plot_profile,
 #' 
 #' # Gate using gate_draw
 #' gt <- Activation_gatingTemplate
-#' gating(gt, gs)
+#' gt_gating(gt, gs)
 #' 
 #' # Plot expression profile in all channels
-#' cyto_plot_profile(getData(gs, "T Cells"),
+#' cyto_plot_profile(gs_pop_get_data(gs, "T Cells"),
 #'   axes_trans = trans
 #' )
 #' @export
@@ -274,7 +274,7 @@ setMethod(cyto_plot_profile,
 #'   \code{\link{cyto_plot,flowFrame-method}}.
 #'
 #' @importFrom flowCore exprs transformList
-#' @importFrom flowWorkspace getData transformerList getTransformations
+#' @importFrom flowWorkspace gs_pop_get_data gh_pop_get_data transformerList gh_get_transformations
 #' @importFrom grDevices n2mfrow
 #' @importFrom graphics par mtext plot.new
 #' @importFrom utils read.csv
@@ -301,7 +301,7 @@ setMethod(cyto_plot_profile,
 #' 
 #' # Gate using gate_draw
 #' gt <- Activation_gatingTemplate
-#' gating(gt, gs)
+#' gt_gating(gt, gs)
 #' 
 #' # Plot expression profile in all channels
 #' cyto_plot_profile(gs,
@@ -324,7 +324,7 @@ setMethod(cyto_plot_profile,
     gs <- x
 
     # Extract population
-    fs <- getData(gs, parent)
+    fs <- gs_pop_get_data(gs, parent)
 
     # Missing channels
     if (is.null(channels)) {

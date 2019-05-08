@@ -191,7 +191,7 @@ setMethod(.cyto_axes_text,
 #'   channel, it returns a list of that contains positions and labels to draw on
 #'   the axis otherwise returns NULL.
 #'
-#' @importFrom flowWorkspace getTransformations getData
+#' @importFrom flowWorkspace gh_get_transformations gh_pop_get_data gs_pop_get_data
 #'
 #' @noRd
 setMethod(.cyto_axes_text,
@@ -206,7 +206,7 @@ setMethod(.cyto_axes_text,
       res <- gh@axis[[sampleNames(gh)]][[channel]]
       if (is.null(res)) {
         # try to grab trans and do inverse trans for axis label on the fly
-        trans <- getTransformations(gh, channel, only.function = FALSE)
+        trans <- gh_get_transformations(gh, channel, only.function = FALSE)
         if (is.null(trans)) {
           res <- NULL
         } else {
@@ -214,7 +214,7 @@ setMethod(.cyto_axes_text,
           trans.func <- trans[["transform"]]
           brk.func <- trans[["breaks"]]
 
-          fr <- getData(gh, use.exprs = FALSE)
+          fr <- gh_pop_get_data(gh, use.exprs = FALSE)
           r <- as.vector(range(fr)[, channel]) # range
           raw <- inv.func(r)
           brks <- brk.func(raw)
@@ -319,7 +319,7 @@ setMethod(.cyto_axes_text,
 #'   used instead. This argument is set to "machine" by default.
 #'
 #' @importFrom flowCore exprs flowSet parameters
-#' @importFrom flowWorkspace pData getData
+#' @importFrom flowWorkspace pData gh_pop_get_data gs_pop_get_data
 #'
 #' @author Dillon Hammill, \email{Dillon.Hammill@anu.edu.au}
 #'
@@ -362,11 +362,11 @@ setMethod(.cyto_axes_text,
 
     # x is a GatingHierarchy
   } else if (inherits(x, "GatingHierarchy")) {
-    fr <- getData(x, parent)
+    fr <- gh_pop_get_data(x, parent)
 
     # x is a GatingSet
   } else if (inherits(x, "GatingSet")) {
-    fr <- as(getData(x, parent), "flowFrame")
+    fr <- as(gs_pop_get_data(x, parent), "flowFrame")
 
     if ("Original" %in% BiocGenerics::colnames(fr)) {
       fr <- suppressWarnings(
@@ -632,7 +632,7 @@ setMethod(.cyto_axes_text,
 #'
 #' @return list containing merged flowFrames, named with group.
 #'
-#' @importFrom flowWorkspace pData getData
+#' @importFrom flowWorkspace pData gh_pop_get_data gs_pop_get_data
 #' @importFrom flowCore sampleFilter Subset
 #'
 #' @noRd
@@ -663,7 +663,7 @@ setMethod(.cyto_axes_text,
 
   # flowSet for merging
   if (inherits(x, "GatingSet")) {
-    fs <- getData(x, parent)
+    fs <- gs_pop_get_data(x, parent)
   } else {
     fs <- x
   }

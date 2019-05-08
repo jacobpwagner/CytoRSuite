@@ -82,7 +82,7 @@ trans <- estimateLogicle(gs[[4]], cyto_fluor_channels(fs))
 gs <- transform(gs, trans)
 
 # Gate using gate_draw
-gating(Activation_gatingTemplate, gs)
+gt_gating(Activation_gatingTemplate, gs)
 
 # Plot
 cyto_plot(gs[[4]],
@@ -91,7 +91,7 @@ cyto_plot(gs[[4]],
 )
 
 # Labels without gates - position using text_x and text_y
-cyto_plot_label(getData(gs, "T Cells")[[4]],
+cyto_plot_label(gs_pop_get_data(gs, "T Cells")[[4]],
   gates = NULL,
   channels = c("Alexa Fluor 488-A", "Alexa Fluor 700-A"),
   trans = trans,

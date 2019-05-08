@@ -9,10 +9,10 @@ test_that(".getCompleteTransList", {
                "'trans' should be a transformList or transformerList object.")
   
   # flowFrame/flowSet transformed but no transList
-  expect_error(.getCompleteTransList(getData(gs, "T Cells")[[1]]), 
+  expect_error(.getCompleteTransList(gs_pop_get_data(gs, "T Cells")[[1]]), 
                "Looks like the data is already transformed. 
  Please supply the transformList/transformerList used.")
-  expect_error(.getCompleteTransList(getData(gs, "T Cells")), 
+  expect_error(.getCompleteTransList(gs_pop_get_data(gs, "T Cells")), 
                "Looks like the data is already transformed. 
  Please supply the transformList/transformerList used.")
   
@@ -176,8 +176,8 @@ test_that(".getTransformedData", {
   # GatingSet raw
   gst <- .getTransformedData(GatingSet(fs, trans))
   
-  expect_equal(pData(parameters(getData(gst, "root")[[1]]))[, "maxRange"], 
-               pData(parameters(getData(gs, "root")[[1]]))[, "maxRange"])
+  expect_equal(pData(parameters(gs_pop_get_data(gst, "root")[[1]]))[, "maxRange"], 
+               pData(parameters(gs_pop_get_data(gs, "root")[[1]]))[, "maxRange"])
   
   # flowSet transformed
   fst <- transform(fs, cyto_trans_check(trans, inverse = FALSE))
@@ -202,8 +202,8 @@ test_that(".getTransformedData", {
   gst2 <- .getTransformedData(gst, trns)
   gst3 <- transform(gst, estimateLogicle(gst[[4]], cyto_fluor_channels(fs)))
   
-  expect_equal(pData(parameters(getData(gst2, "root")[[1]]))[, "maxRange"], 
-               pData(parameters(getData(gst3, "root")[[1]]))[, "maxRange"])
+  expect_equal(pData(parameters(gs_pop_get_data(gst2, "root")[[1]]))[, "maxRange"], 
+               pData(parameters(gs_pop_get_data(gst3, "root")[[1]]))[, "maxRange"])
 })
 
 # .getRawData ------------------------------------------------------------------
@@ -211,7 +211,7 @@ test_that(".getTransformedData", {
 test_that(".getRawData", {
   
   # Transformed data without transList
-  expect_error(.getRawData(getData(gs, "T Cells")), 
+  expect_error(.getRawData(gs_pop_get_data(gs, "T Cells")), 
                "Supply a transform object to inverse transformations.")
   
   # Object of incorrect class
@@ -234,31 +234,31 @@ test_that(".getRawData", {
   # Transformed ----------------------------------------------------------------
   
   # flowFrame
-  fr <- getData(gs, "T Cells")[[1]]
+  fr <- gs_pop_get_data(gs, "T Cells")[[1]]
   inv <- cyto_trans_check(trans, inverse = TRUE)
   fr <- transform(fr, inv)
   
-  expect_equal(.getRawData(getData(gs, "T Cells")[[1]], 
+  expect_equal(.getRawData(gs_pop_get_data(gs, "T Cells")[[1]], 
                            trans), 
                fr)
-  expect_equal(.getRawData(getData(gs, "T Cells")[[1]], 
+  expect_equal(.getRawData(gs_pop_get_data(gs, "T Cells")[[1]], 
                            cyto_trans_check(trans)),
                fr)
   
   # flowSet
-  fst <- getData(gs, "T Cells")
+  fst <- gs_pop_get_data(gs, "T Cells")
   inv <- cyto_trans_check(trans, inverse = TRUE)
   fst <- transform(fst, inv)
   
-  expect_equal(.getRawData(getData(gs, "T Cells"), 
+  expect_equal(.getRawData(gs_pop_get_data(gs, "T Cells"), 
                            trans), 
                fst)
-  expect_equal(.getRawData(getData(gs, "T Cells"), 
+  expect_equal(.getRawData(gs_pop_get_data(gs, "T Cells"), 
                            cyto_trans_check(trans)), 
                fst)
   
   # GatingSet
-  fst <- getData(gs, "T Cells")
+  fst <- gs_pop_get_data(gs, "T Cells")
   inv <- cyto_trans_check(trans, inverse = TRUE)
   fst <- transform(fst, inv)
   

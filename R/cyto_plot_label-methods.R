@@ -97,7 +97,7 @@ setGeneric(
 #' gs <- transform(gs, trans)
 #'
 #' # Gate using gate_draw
-#' gating(Activation_gatingTemplate, gs)
+#' gt_gating(Activation_gatingTemplate, gs)
 #'
 #' # Plot
 #' cyto_plot(gs[[4]],
@@ -106,7 +106,7 @@ setGeneric(
 #' )
 #'
 #' # Labels without gates - position using text_x and text_y
-#' cyto_plot_label(getData(gs, "T Cells")[[4]],
+#' cyto_plot_label(gs_pop_get_data(gs, "T Cells")[[4]],
 #'   gates = NULL,
 #'   channels = c("Alexa Fluor 488-A", "Alexa Fluor 700-A"),
 #'   trans = trans,
@@ -334,7 +334,7 @@ setMethod(cyto_plot_label,
 #' gs <- transform(gs, trans)
 #'
 #' # Gate using gate_draw
-#' gating(Activation_gatingTemplate, gs)
+#' gt_gating(Activation_gatingTemplate, gs)
 #'
 #' # Plot
 #' cyto_plot(gs[[4]],
@@ -343,13 +343,13 @@ setMethod(cyto_plot_label,
 #' )
 #'
 #' # CD69+ CD4 T Cells gate
-#' gt <- getGate(gs, "CD69+ CD4 T Cells")[[1]]
+#' gt <- gs_pop_get_gate(gs, "CD69+ CD4 T Cells")[[1]]
 #' cyto_plot_gate(gt,
 #'   channels = "7-AAD-A"
 #' )
 #'
 #' # Labels
-#' cyto_plot_label(getData(gs, "CD4 T Cells")[[4]],
+#' cyto_plot_label(gs_pop_get_data(gs, "CD4 T Cells")[[4]],
 #'   gates = gt,
 #'   trans = trans,
 #'   channels = "7-AAD-A",
@@ -669,7 +669,7 @@ setMethod(cyto_plot_label,
 #' gs <- transform(gs, trans)
 #' 
 #' # Gate using gate_draw
-#' gating(Activation_gatingTemplate, gs)
+#' gt_gating(Activation_gatingTemplate, gs)
 #' 
 #' # Plot
 #' cyto_plot(gs[[4]],
@@ -678,13 +678,13 @@ setMethod(cyto_plot_label,
 #' )
 #' 
 #' # Cells gate
-#' gt <- getGate(gs, "Cells")[[1]]
+#' gt <- gs_pop_get_gate(gs, "Cells")[[1]]
 #' cyto_plot_gate(gt,
 #'   channels = c("FSC-A", "SSC-A")
 #' )
 #' 
 #' # Labels
-#' cyto_plot_label(getData(gs, "root")[[4]],
+#' cyto_plot_label(gs_pop_get_data(gs, "root")[[4]],
 #'   gates = gt,
 #'   trans = trans,
 #'   channels = c("FSC-A", "SSC-A"),
@@ -867,7 +867,7 @@ setMethod(cyto_plot_label,
 #' gs <- transform(gs, trans)
 #' 
 #' # Gate using gate_draw
-#' gating(Activation_gatingTemplate, gs)
+#' gt_gating(Activation_gatingTemplate, gs)
 #' 
 #' # Plot
 #' cyto_plot(gs[[4]],
@@ -876,13 +876,13 @@ setMethod(cyto_plot_label,
 #' )
 #' 
 #' # T Cells gate
-#' gt <- getGate(gs, "T Cells")[[1]]
+#' gt <- gs_pop_get_gate(gs, "T Cells")[[1]]
 #' cyto_plot_gate(gt,
 #'   channels = c("APC-Cy7-A", "PE-A")
 #' )
 #' 
 #' # Labels
-#' cyto_plot_label(getData(gs, "Live Cells")[[4]],
+#' cyto_plot_label(gs_pop_get_data(gs, "Live Cells")[[4]],
 #'   gates = gt,
 #'   trans = trans,
 #'   channels = c("APC-Cy7-A", "PE-A"),
@@ -1071,7 +1071,7 @@ setMethod(cyto_plot_label,
 #' gs <- transform(gs, trans)
 #'
 #' # Gate using gate_draw
-#' gating(Activation_gatingTemplate, gs)
+#' gt_gating(Activation_gatingTemplate, gs)
 #'
 #' # Plot
 #' cyto_plot(gs[[4]],
@@ -1080,13 +1080,13 @@ setMethod(cyto_plot_label,
 #' )
 #'
 #' # T Cells & Dendritic Cells gates
-#' gts <- list(getGate(gs, "T Cells")[[1]], getGate(gs, "Dendritic Cells")[[1]])
+#' gts <- list(gs_pop_get_gate(gs, "T Cells")[[1]], gs_pop_get_gate(gs, "Dendritic Cells")[[1]])
 #' cyto_plot_gate(gts,
 #'   channels = c("APC-Cy7-A", "PE-A")
 #' )
 #'
 #' # Labels
-#' cyto_plot_label(getData(gs, "Live Cells")[[4]],
+#' cyto_plot_label(gs_pop_get_data(gs, "Live Cells")[[4]],
 #'   gates = gts,
 #'   trans = trans,
 #'   channels = c("APC-Cy7-A", "PE-A"),
@@ -1214,7 +1214,7 @@ setMethod(cyto_plot_label,
 #' gs <- transform(gs, trans)
 #'
 #' # Gate using gate_draw
-#' gating(Activation_gatingTemplate, gs)
+#' gt_gating(Activation_gatingTemplate, gs)
 #'
 #' # Plot
 #' cyto_plot(gs[[4]],
@@ -1223,15 +1223,15 @@ setMethod(cyto_plot_label,
 #' )
 #'
 #' # T Cells & Dendritic Cells gates
-#' gts <- filters(list(getGate(gs, "T Cells")[[1]], 
-#' getGate(gs, "Dendritic Cells")[[1]]))
+#' gts <- filters(list(gs_pop_get_gate(gs, "T Cells")[[1]], 
+#' gs_pop_get_gate(gs, "Dendritic Cells")[[1]]))
 #' cyto_plot_gate(gts,
 #'   channels = c("APC-Cy7-A", "PE-A"),
 #'   gate_line_col = c("red", "black")
 #' )
 #'
 #' # Labels
-#' cyto_plot_label(getData(gs, "Live Cells")[[4]],
+#' cyto_plot_label(gs_pop_get_data(gs, "Live Cells")[[4]],
 #'   gates = gts,
 #'   trans = trans,
 #'   channels = c("APC-Cy7-A", "PE-A"),

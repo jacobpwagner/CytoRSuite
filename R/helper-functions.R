@@ -108,7 +108,7 @@ setMethod(cyto_fluor_channels,
 setMethod(cyto_fluor_channels,
   signature = "GatingSet",
   definition = function(x) {
-    fr <- getData(x[[1]], "root")
+    fr <- gh_pop_get_data(x[[1]], "root")
     cyto_fluor_channels(fr)
   }
 )

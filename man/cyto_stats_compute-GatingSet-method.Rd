@@ -61,7 +61,7 @@ gs <- transform(gs, trans)
 
 # Gate using gate_draw
 gt <- Activation_gatingTemplate
-gating(gt, gs)
+gt_gating(gt, gs)
 
 # Compute statistics
 cyto_stats_compute(gs,

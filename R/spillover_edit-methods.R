@@ -141,7 +141,7 @@ setGeneric(
 #' 
 #' # Gate single cells using gate_draw
 #' gt <- Compensation_gatingTemplate
-#' gating(gt, gs)
+#' gt_gating(gt, gs)
 #' 
 #' # Channel match file
 #' cmfile <- system.file("extdata",
@@ -150,7 +150,7 @@ setGeneric(
 #' )
 #' 
 #' # Edit spillover matrix
-#' spillover_edit(getData(gs, "Single Cells"),
+#' spillover_edit(gs_pop_get_data(gs, "Single Cells"),
 #'   channel_match = cmfile
 #' )
 #' }
@@ -807,7 +807,7 @@ setMethod(spillover_edit,
 #' 
 #' # Gate single cells using gate_draw
 #' gt <- Compensation_gatingTemplate
-#' gating(gt, gs)
+#' gt_gating(gt, gs)
 #' 
 #' # Channel match file
 #' cmfile <- system.file("extdata",
@@ -846,9 +846,9 @@ setMethod(spillover_edit,
 
     # Extract population for downstream plotting
     if (!is.null(parent)) {
-      fs <- getData(gs, parent)
+      fs <- gs_pop_get_data(gs, parent)
     } else if (is.null(parent)) {
-      fs <- getData(gs, getNodes(gs)[length(getNodes(gs))])
+      fs <- gs_pop_get_data(gs, gs_get_pop_paths(gs)[length(gs_get_pop_paths(gs))])
     }
 
     # Make call to spillover_edit flowSet method

@@ -69,7 +69,7 @@ setGeneric(
 #' gs <- transform(gs, trans)
 #' 
 #' # Gate using gate_draw
-#' gating(Activation_gatingTemplate, gs)
+#' gt_gating(Activation_gatingTemplate, gs)
 #' 
 #' # Plot
 #' cyto_plot(gs[[4]],
@@ -79,7 +79,7 @@ setGeneric(
 #' )
 #' 
 #' # CD4 T Cells gate
-#' cyto_plot_gate(getGate(gs, "CD4 T Cells")[[1]],
+#' cyto_plot_gate(gs_pop_get_gate(gs, "CD4 T Cells")[[1]],
 #'   channels = c("Alexa Fluor 488-A", "Alexa Fluor 700-A"),
 #'   gate_line_col = "purple"
 #' )
@@ -273,7 +273,7 @@ setMethod(cyto_plot_gate,
 #' gs <- transform(gs, trans)
 #' 
 #' # Gate using gate_draw
-#' gating(Activation_gatingTemplate, gs)
+#' gt_gating(Activation_gatingTemplate, gs)
 #' 
 #' # Plot
 #' cyto_plot(gs[[4]],
@@ -282,7 +282,7 @@ setMethod(cyto_plot_gate,
 #' )
 #' 
 #' # Cells gate
-#' cyto_plot_gate(getGate(gs, "Cells")[[1]],
+#' cyto_plot_gate(gs_pop_get_gate(gs, "Cells")[[1]],
 #'   channels = c("FSC-A", "SSC-A"),
 #'   gate_line_col = "purple"
 #' )
@@ -415,7 +415,7 @@ setMethod(cyto_plot_gate,
 #' gs <- transform(gs, trans)
 #' 
 #' # Gate using gate_draw
-#' gating(Activation_gatingTemplate, gs)
+#' gt_gating(Activation_gatingTemplate, gs)
 #' 
 #' # Plot
 #' cyto_plot(gs[[4]],
@@ -425,7 +425,7 @@ setMethod(cyto_plot_gate,
 #' )
 #' 
 #' # T Cells gate
-#' cyto_plot_gate(getGate(gs, "T Cells")[[1]],
+#' cyto_plot_gate(gs_pop_get_gate(gs, "T Cells")[[1]],
 #'   channels = c("APC-Cy7-A", "PE-A"),
 #'   gate_line_col = "purple"
 #' )
@@ -517,7 +517,7 @@ setMethod(cyto_plot_gate,
 #' gs <- transform(gs, trans)
 #' 
 #' # Gate using gate_draw
-#' gating(Activation_gatingTemplate, gs)
+#' gt_gating(Activation_gatingTemplate, gs)
 #' 
 #' # Plot
 #' cyto_plot(gs[[4]],
@@ -528,8 +528,8 @@ setMethod(cyto_plot_gate,
 #' 
 #' # T Cells & Dendritic Cells gate
 #' cyto_plot_gate(list(
-#'   getGate(gs, "T Cells")[[1]],
-#'   getGate(gs, "Dendritic Cells")[[1]]
+#'   gs_pop_get_gate(gs, "T Cells")[[1]],
+#'   gs_pop_get_gate(gs, "Dendritic Cells")[[1]]
 #' ),
 #' channels = c("APC-Cy7-A", "PE-A"),
 #' gate_line_col = c("purple", "magenta")
@@ -675,7 +675,7 @@ setMethod(cyto_plot_gate,
 #' gs <- transform(gs, trans)
 #' 
 #' # Gate using gate_draw
-#' gating(Activation_gatingTemplate, gs)
+#' gt_gating(Activation_gatingTemplate, gs)
 #' 
 #' # Plot
 #' cyto_plot(gs[[4]],
@@ -686,8 +686,8 @@ setMethod(cyto_plot_gate,
 #' 
 #' # T Cells & Dendritic Cells gate
 #' cyto_plot_gate(filters(list(
-#'   getGate(gs, "T Cells")[[1]],
-#'   getGate(gs, "Dendritic Cells")[[1]]
+#'   gs_pop_get_gate(gs, "T Cells")[[1]],
+#'   gs_pop_get_gate(gs, "Dendritic Cells")[[1]]
 #' )),
 #' channels = c("APC-Cy7-A", "PE-A"),
 #' gate_line_col = c("green4", "orange")

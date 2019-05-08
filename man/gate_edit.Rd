@@ -62,7 +62,7 @@ gs <- transform(gs, trans)
 
 # Gate using gate_draw
 gt <- Activation_gatingTemplate
-gating(gt, gs)
+gt_gating(gt, gs)
 
 # Edit CD4 T Cells Gate - replace gatingTemplate name
 gate_edit(gs,

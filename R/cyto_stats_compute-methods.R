@@ -317,7 +317,7 @@ setMethod(cyto_stats_compute,
 #' @author Dillon Hammill, \email{Dillon.Hammill@anu.edu.au}
 #'
 #' @importFrom flowCore exprs inverseLogicleTransform transform
-#' @importFrom flowWorkspace getData sampleNames getTransformations
+#' @importFrom flowWorkspace gs_pop_get_data gh_pop_get_data sampleNames gh_get_transformations
 #' @importFrom utils write.csv
 #'
 #' @seealso \code{\link{cyto_stats_compute,flowFrame-method}}
@@ -339,7 +339,7 @@ setMethod(cyto_stats_compute,
 #' 
 #' # Gate using gate_draw
 #' gt <- Activation_gatingTemplate
-#' gating(gt, gs)
+#' gt_gating(gt, gs)
 #' 
 #' # Compute statistics
 #' cyto_stats_compute(gs,
@@ -393,13 +393,13 @@ setMethod(cyto_stats_compute,
     # Get trans if not supplied
     if (is.null(trans)) {
       trans <- transformList(
-        names(getTransformations(gs[[1]])),
-        getTransformations(gs[[1]])
+        names(gh_get_transformations(gs[[1]])),
+        gh_get_transformations(gs[[1]])
       )
     }
 
     # Extract population(s)
-    fs.lst <- lapply(alias, function(x) getData(gs, x))
+    fs.lst <- lapply(alias, function(x) gs_pop_get_data(gs, x))
 
     # Population frequencies
     if (stat == "freq") {
@@ -415,7 +415,7 @@ setMethod(cyto_stats_compute,
 
       # Get parent counts
       prnts <- lapply(parent, function(x) {
-        fs <- getData(gs, x)
+        fs <- gs_pop_get_data(gs, x)
         as.data.frame(cyto_stats_compute(fs,
           channels = channels,
           trans = trans,

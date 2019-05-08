@@ -87,7 +87,7 @@ gs <- GatingSet(Compensation)
 
 # Gate using gate_draw
 gt <- Compensation_gatingTemplate
-gating(gt, gs)
+gt_gating(gt, gs)
 
 # Channel match fille
 cmfile <- system.file("extdata",

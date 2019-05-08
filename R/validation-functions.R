@@ -223,7 +223,7 @@ setMethod(cyto_channel_check,
 #'
 #' @return vector of valid channel names.
 #'
-#' @importFrom flowWorkspace pData getData
+#' @importFrom flowWorkspace pData gs_pop_get_data gh_pop_get_data
 #' @importFrom flowCore parameters
 #'
 #' @author Dillon Hammill, \email{Dillon.Hammill@anu.edu.au}
@@ -274,7 +274,7 @@ setMethod(cyto_channel_check,
 
     # Assign x to gs
     gs <- x
-    fs <- getData(gs, "root")
+    fs <- gs_pop_get_data(gs, "root")
 
     chans <- BiocGenerics::colnames(fs[[1]])
     fr.data <- pData(parameters(fs[[1]]))
@@ -811,7 +811,7 @@ setMethod(.cyto_overlay_check,
 #'
 #' @author Dillon Hammill, \email{Dillon.Hammill@anu.edu.au}
 #'
-#' @importFrom flowWorkspace getData
+#' @importFrom flowWorkspace gs_pop_get_data gh_pop_get_data gh_get_pop_paths gs_get_pop_paths
 #'
 #' @noRd
 setMethod(.cyto_overlay_check,
@@ -824,7 +824,7 @@ setMethod(.cyto_overlay_check,
     gh <- x
 
     # Extract flowFrame
-    fr <- getData(gh, "root")
+    fr <- gh_pop_get_data(gh, "root")
 
     # Overlay should be character vector of population names
     if (inherits(overlay, "flowFrame") |
@@ -832,12 +832,12 @@ setMethod(.cyto_overlay_check,
       inherits(overlay, "list")) {
 
     } else if (inherits(overlay, "character")) {
-      if (!all(overlay %in% basename(getNodes(gh)))) {
+      if (!all(overlay %in% basename(gh_get_pop_paths(gh)))) {
         stop("'overlay' does not exist in the GatingHierarchy.")
       } else {
         nms <- overlay
         overlay <- lapply(overlay, function(x) {
-          getData(gh, x)
+          gh_pop_get_data(gh, x)
         })
         names(overlay) <- nms
       }
@@ -866,7 +866,7 @@ setMethod(.cyto_overlay_check,
 #'
 #' @author Dillon Hammill, \email{Dillon.Hammill@anu.edu.au}
 #'
-#' @importFrom flowWorkspace getData
+#' @importFrom flowWorkspace gs_pop_get_data gh_pop_get_data gh_get_pop_paths gs_get_pop_paths
 #'
 #' @noRd
 setMethod(.cyto_overlay_check,
@@ -879,7 +879,7 @@ setMethod(.cyto_overlay_check,
     gs <- x
 
     # Extract flowFrame
-    fs <- getData(gs, "root")
+    fs <- gs_pop_get_data(gs, "root")
 
     # Overlay should be character vector of population names
     if (inherits(overlay, "flowFrame") |
@@ -887,12 +887,12 @@ setMethod(.cyto_overlay_check,
       inherits(overlay, "list")) {
 
     } else if (inherits(overlay, "character")) {
-      if (!all(overlay %in% basename(getNodes(gs)))) {
+      if (!all(overlay %in% basename(gs_get_pop_paths(gs)))) {
         stop("overlay' does not exist in the GatingHierarchy.")
       } else {
         nms <- overlay
         overlay <- lapply(overlay, function(x) {
-          getData(gs, x)
+          gs_pop_get_data(gs, x)
         })
         names(overlay) <- nms
       }

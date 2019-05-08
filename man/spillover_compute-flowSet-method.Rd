@@ -79,7 +79,7 @@ gs <- GatingSet(Compensation)
 
 # Gate using gate_draw
 gt <- Compensation_gatingTemplate
-gating(gt, gs)
+gt_gating(gt, gs)
 
 # Channel match fille
 cmfile <- system.file("extdata",
@@ -88,7 +88,7 @@ cmfile <- system.file("extdata",
 )
 
 # Compute fluorescent spillover matrix
-spill <- spillover_compute(getData(gs, "Single Cells"),
+spill <- spillover_compute(gs_pop_get_data(gs, "Single Cells"),
   channel_match = cmfile,
   spillover = "Example-spillover.csv"
 )

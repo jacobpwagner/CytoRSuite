@@ -124,7 +124,7 @@ The full details of how **CytoRSuite** works will be tackled individually in the
     library(CytoRSuiteData)
     
     gs <- GatingSet(Compensation)
-    gating(Compensation_gatingTemplate, gs)
+    gt_gating(Compensation_gatingTemplate, gs)
     
     par(mfrow = c(1,2))
     cyto_plot(gs, parent = "root", alias = "Cells", channels = c("FSC-A","SSC-A"), group_by = "all", layout = FALSE)
@@ -263,7 +263,7 @@ trans <- estimateLogicle(gs[[4]], cyto_fluor_channels(gs))
 gs <- transform(gs, trans)
 
 gt <- gatingTemplate(system.file("extdata", "Activation-gatingTemplate.csv", package = "CytoRSuiteData"))
-gating(gt,gs)
+gt_gating(gt,gs)
 ```
 
 ```{r, eval = FALSE}

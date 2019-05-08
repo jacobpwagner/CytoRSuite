@@ -55,7 +55,7 @@ trans <- estimateLogicle(gs[[4]], cyto_fluor_channels(gs))
 gs <- transform(gs, trans)
 
 # Gate using gate_draw
-gating(Activation_gatingTemplate, gs)
+gt_gating(Activation_gatingTemplate, gs)
 
 # Plot
 cyto_plot(gs[[4]],
@@ -64,7 +64,7 @@ cyto_plot(gs[[4]],
 )
 
 # Cells gate
-cyto_plot_gate(getGate(gs, "Cells")[[1]],
+cyto_plot_gate(gs_pop_get_gate(gs, "Cells")[[1]],
   channels = c("FSC-A", "SSC-A"),
   gate_line_col = "purple"
 )

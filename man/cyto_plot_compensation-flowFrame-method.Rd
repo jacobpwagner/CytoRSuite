@@ -76,12 +76,12 @@ gs <- GatingSet(Compensation)
 
 # Gate single cells using gate_draw
 gt <- Compensation_gatingTemplate
-gating(gt, gs)
+gt_gating(gt, gs)
 
 # Compensation plots
-cyto_plot_compensation(getData(gs, "Single Cells")[[1]],
+cyto_plot_compensation(gs_pop_get_data(gs, "Single Cells")[[1]],
   channel_match = "7-AAD-A",
-  overlay = getData(gs, "Single Cells")[[4]]
+  overlay = gs_pop_get_data(gs, "Single Cells")[[4]]
 )
 
 # Don't run - return "CytoRSuite_wd_check" to default

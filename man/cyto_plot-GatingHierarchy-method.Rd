@@ -267,7 +267,7 @@ gs <- transform(gs, trans)
 
 # Apply gatingTemplate
 gt <- Activation_gatingTemplate
-gating(gt, gs)
+gt_gating(gt, gs)
 
 # 2-D scatter plot with Overlays & Gate
 cyto_plot(gs[[4]],

@@ -9,7 +9,7 @@
 #' @return an object of class \code{gatingSet} with gate and children removed,
 #'   as well as gatingTemplate file with population removed.
 #'
-#' @importFrom flowWorkspace getDescendants Rm getNodes
+#' @importFrom flowWorkspace gh_pop_get_descendants gs_pop_remove gh_pop_remove gs_get_pop_paths
 #' @importFrom utils read.csv write.csv
 #'
 #' @author Dillon Hammill, \email{Dillon.Hammill@anu.edu.au}
@@ -31,7 +31,7 @@
 #' 
 #' # Gate using gate_draw
 #' gt <- Activation_gatingTemplate
-#' gating(gt, gs)
+#' gt_gating(gt, gs)
 #' 
 #' # Remove T Cells population - replace gatingTemplate name
 #' gate_remove(gs, "T Cells", gatingTemplate = "gatingTemplate.csv")
@@ -47,7 +47,7 @@ gate_remove <- function(gs,
   }
 
   # Check Alias
-  if (!all(alias %in% basename(getNodes(gs)))) {
+  if (!all(alias %in% basename(gs_get_pop_paths(gs)))) {
     stop("Supplied alias does not exist in the GatingSet.")
   }
 
@@ -66,7 +66,7 @@ gate_remove <- function(gs,
   # Get children from GatingSet
   chldrn <- unlist(lapply(
     alias,
-    function(x) basename(getDescendants(gs[[1]], x))
+    function(x) basename(gh_pop_get_descendants(gs[[1]], x))
   ))
   chldrn <- unlist(chldrn, use.names = FALSE)
   chldrn <- c(alias, unique(chldrn))
@@ -79,8 +79,8 @@ gate_remove <- function(gs,
 
   # Remove nodes from GatingSet
   for (i in seq_len(length(alias))) {
-    if (alias[i] %in% basename(getNodes(gs))) {
-      suppressMessages(Rm(alias[i], gs))
+    if (alias[i] %in% basename(gs_get_pop_paths(gs))) {
+      suppressMessages(gs_pop_remove(gs, alias[i]))
     }
   }
 
@@ -94,8 +94,8 @@ gate_remove <- function(gs,
 #' @param gatingTemplate name of the \code{gatingTemplate} csv file (e.g.
 #'   "gatingTemplate.csv") where the gate(s) are saved.
 #'
-#' @importFrom flowWorkspace getGate getNodes
-#' @importFrom openCyto gating
+#' @importFrom flowWorkspace gs_pop_get_gate gs_get_pop_paths
+#' @importFrom openCyto gt_gating gt_get_gate
 #' @importFrom flowCore filters parameters<-
 #'
 #' @author Dillon Hammill, \email{Dillon.Hammill@anu.edu.au}
@@ -119,7 +119,7 @@ gate_remove <- function(gs,
 #' 
 #' # Gate using gate_draw
 #' gt <- Activation_gatingTemplate
-#' gating(gt, gs)
+#' gt_gating(gt, gs)
 #' 
 #' # gatingTemplate
 #' gtfile <- system.file("extdata",
@@ -162,7 +162,7 @@ gate_extract <- function(parent,
   gt <- suppressMessages(gatingTemplate(gatingTemplate))
 
   # Extract population nodes from gt
-  nds <- getNodes(gt, only.names = TRUE)
+  nds <- gt_get_nodes(gt, only.names = TRUE)
 
   # Parent Node
   parent <- names(nds[match(parent, nds)])
@@ -173,7 +173,7 @@ gate_extract <- function(parent,
     # Alias node
     alias <- names(nds[match(x, nds)])
 
-    gm <- getGate(gt, parent, alias)
+    gm <- gt_get_gate(gt, parent, alias)
     gate <- eval(parameters(gm)$gate)
     names(parameters(gate[[1]][[1]])) <- parameters(gate[[1]][[1]])
     return(gate)
@@ -208,8 +208,9 @@ gate_extract <- function(parent,
 #' @return an object of class \code{GatingSet} with edited gate applied, as well
 #'   as gatingTemplate file with edited gate saved.
 #'
-#' @importFrom flowWorkspace getData getTransformations GatingSet getGate
-#'   setGate recompute pData
+#' @importFrom flowWorkspace gs_pop_get_data gh_pop_get_data 
+#'   gh_get_transformations GatingSet gh_pop_get_gate gs_pop_get_gate
+#'   gh_pop_set_gate gs_pop_set_gate recompute pData
 #' @importFrom flowCore parameters filterList
 #' @importFrom openCyto gatingTemplate
 #' @importFrom data.table as.data.table fread :=
@@ -235,7 +236,7 @@ gate_extract <- function(parent,
 #' 
 #' # Gate using gate_draw
 #' gt <- Activation_gatingTemplate
-#' gating(gt, gs)
+#' gt_gating(gt, gs)
 #' 
 #' # Edit CD4 T Cells Gate - replace gatingTemplate name
 #' gate_edit(gs,
@@ -258,14 +259,14 @@ gate_edit <- function(x,
   # Parent
   if (is.null(parent)) {
     stop("Please supply the name of the parent population.")
-  } else if (!parent %in% basename(getNodes(x))) {
+  } else if (!parent %in% basename(gs_get_pop_paths(x))) {
     stop("Supplied parent does not exist in the GatingSet.")
   }
 
   # Alias
   if (is.null(alias)) {
     stop("Please supply the name(s) of the gates to edit to 'alias'.")
-  } else if (!all(alias %in% basename(getNodes(x)))) {
+  } else if (!all(alias %in% basename(gs_get_pop_paths(x)))) {
     stop("Supplied alias does not exist in the GatingSet.")
   }
 
@@ -288,10 +289,10 @@ gate_edit <- function(x,
   pd <- pData(gs)
 
   # Extract transList from gs
-  if (length(getTransformations(gs[[1]])) != 0) {
+  if (length(gh_get_transformations(gs[[1]])) != 0) {
     transList <- transformList(
-      names(getTransformations(gs[[1]])),
-      getTransformations(gs[[1]])
+      names(gh_get_transformations(gs[[1]])),
+      gh_get_transformations(gs[[1]])
     )
   } else {
     transList <- NULL
@@ -301,7 +302,7 @@ gate_edit <- function(x,
   gT <- suppressMessages(gatingTemplate(gatingTemplate))
 
   # Extract population nodes from gt
-  nds <- getNodes(gT, only.names = TRUE)
+  nds <- gt_get_nodes(gT, only.names = TRUE)
 
   # Parent Node
   prnt <- names(nds)[match(parent, nds)]
@@ -371,7 +372,7 @@ gate_edit <- function(x,
 
     # Alias node
     als <- names(nds[match(alias[x], nds)])
-    gm <- getGate(gT, prnt, als)
+    gm <- gt_get_gate(gT, prnt, als)
     gate <- eval(parameters(gm)$gate)
     names(gate) <- unique(pd$groupby)
 
@@ -393,7 +394,7 @@ gate_edit <- function(x,
   new_gates <- lapply(gs.lst, function(grp) {
 
     # Extract parent population for plotting
-    fs <- suppressMessages(getData(grp, parent))
+    fs <- suppressMessages(gs_pop_get_data(grp, parent))
     fr <- as(fs, "flowFrame")
 
     # Remove "Original" column introduced by coercion
@@ -414,7 +415,7 @@ gate_edit <- function(x,
       # Extract populations to overlay - list of flowSets
       if (class(overlay) == "character") {
         overlay <- lapply(overlay, function(overlay) {
-          getData(grp, overlay)
+          gs_pop_get_data(grp, overlay)
         })
 
         overlay <- lapply(overlay, function(x) {
@@ -433,7 +434,7 @@ gate_edit <- function(x,
 
     # Extract gate(s) for plotting
     gates <- filters(lapply(alias, function(x) {
-      getGate(grp[[1]], x)
+      gh_pop_get_gate(grp[[1]], x)
     }))
 
     # Plot data and existing gates
@@ -591,7 +592,7 @@ gate_edit <- function(x,
       )
       names(fltrs) <- as.character(sampleNames(gs[which(pd$groupby == grp)]))
 
-      suppressMessages(setGate(gs[which(pd$groupby == grp)], alias[pop], fltrs))
+      suppressMessages(gs_pop_set_gate(gs[which(pd$groupby == grp)], alias[pop], fltrs))
       suppressMessages(recompute(gs[which(pd$groupby == grp)], alias[pop]))
     })
   })
@@ -624,12 +625,12 @@ gate_edit <- function(x,
 #' 
 #' # Gate using gate_draw
 #' gt <- Activation_gatingTemplate
-#' gating(gt, gs)
+#' gt_gating(gt, gs)
 #' 
 #' # Get gate type used for T Cells gate
-#' gate_type(getGate(gs, "Cells")[[1]])
-#' gate_type(getGate(gs, "T Cells")[[1]])
-#' gate_type(getGate(gs, "CD69+ CD4 T Cells")[[1]])
+#' gate_type(gs_pop_get_gate(gs, "Cells")[[1]])
+#' gate_type(gs_pop_get_gate(gs, "T Cells")[[1]])
+#' gate_type(gs_pop_get_gate(gs, "CD69+ CD4 T Cells")[[1]])
 #' @export
 gate_type <- function(gates) {
 
@@ -846,8 +847,8 @@ gate_type <- function(gates) {
 #' @author Dillon Hammill, \email{Dillon.Hammill@anu.edu.au}
 #'
 #' @importFrom data.table fread fwrite
-#' @importFrom openCyto gatingTemplate
-#' @importFrom flowWorkspace getGate getNodes
+#' @importFrom openCyto gatingTemplate gt_get_nodes
+#' @importFrom flowWorkspace gs_pop_get_gate gh_pop_get_gate gs_get_pop_paths gh_get_pop_paths
 #' @importFrom flowCore parameters filters
 #' @importFrom utils read.csv write.csv
 #'
@@ -871,7 +872,7 @@ gate_type <- function(gates) {
 #' 
 #' # Updated gatingTemplate will work as expected
 #' gt <- gatingTemplate("gatingTemplate.csv")
-#' gating(gt, gs)
+#' gt_gating(gt, gs)
 #' }
 #' 
 #' @export
@@ -910,7 +911,7 @@ gatingTemplate_convert <- function(gs, gatingTemplate) {
     pops <- basename(gT@nodes)[-1]
 
     # Extract population nodes from gT
-    nds <- getNodes(gT, only.names = TRUE)
+    nds <- gt_get_nodes(gT, only.names = TRUE)
 
     als <- names(nds[match(pops[i], nds)])
 
@@ -919,7 +920,7 @@ gatingTemplate_convert <- function(gs, gatingTemplate) {
     parent <- as.character(parent)
 
     prnt <- names(nds[match(parent, nds)])
-    gm <- getGate(gT, prnt, als)
+    gm <- gt_get_gate(gT, prnt, als)
     gate <- eval(parameters(gm)$gate)
     gts <- list(filters(list(gate)))
 
@@ -959,7 +960,7 @@ gatingTemplate_convert <- function(gs, gatingTemplate) {
 #' 
 #' @author Dillon Hammill, \email{Dillon.Hammill@anu.edu.au}
 #' 
-#' @importFrom openCyto gatingTemplate gating
+#' @importFrom openCyto gatingTemplate gt_gating
 #' @importFrom flowWorkspace recompute
 #' @importFrom utils edit read.csv write.csv
 #' 
@@ -1008,7 +1009,7 @@ gatingTemplate_edit <- function(x, gatingTemplate = NULL){
   gt <- gatingTemplate(gatingTemplate)
   
   # Re-apply template to GatingSet
-  suppressMessages(gating(gt, gs))
+  suppressMessages(gt_gating(gt, gs))
   
   # Recompute statistics
   suppressMessages(recompute(gs))

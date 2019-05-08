@@ -88,12 +88,12 @@ setGeneric(
 #' 
 #' # Gate single cells using gate_draw
 #' gt <- Compensation_gatingTemplate
-#' gating(gt, gs)
+#' gt_gating(gt, gs)
 #' 
 #' # Compensation plots
-#' cyto_plot_compensation(getData(gs, "Single Cells")[[1]],
+#' cyto_plot_compensation(gs_pop_get_data(gs, "Single Cells")[[1]],
 #'   channel_match = "7-AAD-A",
-#'   overlay = getData(gs, "Single Cells")[[4]]
+#'   overlay = gs_pop_get_data(gs, "Single Cells")[[4]]
 #' )
 #' 
 #' # Don't run - return "CytoRSuite_wd_check" to default
@@ -294,7 +294,7 @@ setMethod(cyto_plot_compensation,
 #' 
 #' # Gate single cells using gate_draw
 #' gt <- Compensation_gatingTemplate
-#' gating(gt, gs)
+#' gt_gating(gt, gs)
 #' 
 #' # Channel match file
 #' cmfile <- system.file("extdata",
@@ -303,7 +303,7 @@ setMethod(cyto_plot_compensation,
 #' )
 #' 
 #' # Compensation plots
-#' cyto_plot_compensation(getData(gs, "Single Cells"),
+#' cyto_plot_compensation(gs_pop_get_data(gs, "Single Cells"),
 #'   channel_match = cmfile
 #' )
 #' 
@@ -571,7 +571,7 @@ setMethod(cyto_plot_compensation,
 #' @param ... additional arguments passed to
 #'   \code{\link{cyto_plot,flowFrame-method}}.
 #'
-#' @importFrom flowWorkspace sampleNames pData getNodes GatingSet
+#' @importFrom flowWorkspace sampleNames pData gh_get_pop_paths gs_get_pop_paths GatingSet
 #' @importFrom flowCore parameters compensate flowSet fsApply
 #' @importFrom ncdfFlow ncfsApply
 #' @importFrom utils read.csv
@@ -591,7 +591,7 @@ setMethod(cyto_plot_compensation,
 #' 
 #' # Gate single cells using gate_draw
 #' gt <- Compensation_gatingTemplate
-#' gating(gt, gs)
+#' gt_gating(gt, gs)
 #' 
 #' # Channel match file
 #' cmfile <- system.file("extdata",
@@ -632,7 +632,7 @@ setMethod(cyto_plot_compensation,
 
     # Parent
     if (is.null(parent)) {
-      parent <- basename(getNodes(gs))[length(getNodes(gs))]
+      parent <- basename(gs_get_pop_paths(gs))[length(gs_get_pop_paths(gs))]
       message(paste(
         "No parent supplied -",
         parent,
@@ -644,7 +644,7 @@ setMethod(cyto_plot_compensation,
     channels <- cyto_fluor_channels(gs)
 
     # Extract parent
-    fs <- getData(gs, parent)
+    fs <- gs_pop_get_data(gs, parent)
 
     # Compensation
     if (compensate == TRUE) {

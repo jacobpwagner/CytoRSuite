@@ -39,7 +39,7 @@ gs <- transform(gs, trans)
 
 # Gate using gate_draw
 gt <- Activation_gatingTemplate
-gating(gt, gs)
+gt_gating(gt, gs)
 
 # Remove T Cells population - replace gatingTemplate name
 gate_remove(gs, "T Cells", gatingTemplate = "gatingTemplate.csv")

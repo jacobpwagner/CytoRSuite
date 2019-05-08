@@ -80,7 +80,7 @@ trans <- estimateLogicle(gs[[4]], cyto_fluor_channels(fs))
 gs <- transform(gs, trans)
 
 # Gate using gate_draw
-gating(Activation_gatingTemplate, gs)
+gt_gating(Activation_gatingTemplate, gs)
 
 # Plot
 cyto_plot(gs[[4]],
@@ -89,13 +89,13 @@ cyto_plot(gs[[4]],
 )
 
 # T Cells & Dendritic Cells gates
-gts <- list(getGate(gs, "T Cells")[[1]], getGate(gs, "Dendritic Cells")[[1]])
+gts <- list(gs_pop_get_gate(gs, "T Cells")[[1]], gs_pop_get_gate(gs, "Dendritic Cells")[[1]])
 cyto_plot_gate(gts,
   channels = c("APC-Cy7-A", "PE-A")
 )
 
 # Labels
-cyto_plot_label(getData(gs, "Live Cells")[[4]],
+cyto_plot_label(gs_pop_get_data(gs, "Live Cells")[[4]],
   gates = gts,
   trans = trans,
   channels = c("APC-Cy7-A", "PE-A"),

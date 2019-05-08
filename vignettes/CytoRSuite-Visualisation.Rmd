@@ -77,7 +77,7 @@ gs <- transform(gs, trans)
 gating(Activation_gatingTemplate,gs)
 
 # Pull out T Cells Population 
-TCells <- getData(gs, "T Cells")
+TCells <- gs_pop_get_data(gs, "T Cells")
 
 ```
 

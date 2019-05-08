@@ -136,7 +136,7 @@ test_that("gate_draw GatingSet method", {
             display = 0.1, 
             gatingTemplate = "gatingTemplate.csv")
   
-  expect_equal(basename(getNodes(gs1)), c("root","x","y","z"))
+  expect_equal(basename(gs_get_pop_paths(gs1)), c("root","x","y","z"))
   
   gate_draw(gs1, 
             parent = "root", 
@@ -145,7 +145,7 @@ test_that("gate_draw GatingSet method", {
             type = "w", 
             display = 0.1)
   
-  expect_equal(basename(getNodes(gs1)), c("root","x","y","z","K","L","M"))
+  expect_equal(basename(gs_get_pop_paths(gs1)), c("root","x","y","z","K","L","M"))
   
   gby <- gate_draw(gs1, 
             group_by = "OVAConc", 
@@ -155,7 +155,7 @@ test_that("gate_draw GatingSet method", {
             type = "p", 
             display = 0.1)
 
-  expect_equal(basename(getNodes(gs1)), c("root","x","y","z","K","L","M","X"))
+  expect_equal(basename(gs_get_pop_paths(gs1)), c("root","x","y","z","K","L","M","X"))
   
 })
 unlink("gatingTemplate.csv")

@@ -27,7 +27,7 @@ gsc <- GatingSet(Comp)
 gtc <- gatingTemplate(paste0(datadir,"/Compensation-gatingTemplate.csv"))
 
 # Gating -
-gating(gtc, gsc)
+gt_gating(gtc, gsc)
 
 # Spillover
 spfile <- system.file("extdata", "Ref-Spillover-matrix.csv", 

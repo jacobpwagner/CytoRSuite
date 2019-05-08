@@ -49,7 +49,7 @@ gs <- transform(gs, trans)
 
 # Gate using gate_draw
 gt <- Activation_gatingTemplate
-gating(gt, gs)
+gt_gating(gt, gs)
 
 # Plot expression profile in all channels
 cyto_plot_profile(gs,

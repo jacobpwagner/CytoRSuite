@@ -542,8 +542,8 @@ setMethod(gate_draw,
 #'   \code{\link[openCyto:gatingTemplate-class]{gatingTemplate}}.
 #'
 #' @importFrom BiocGenerics colnames
-#' @importFrom flowWorkspace getData
-#' @importFrom openCyto add_pop
+#' @importFrom flowWorkspace gs_pop_get_data gh_pop_get_data
+#' @importFrom openCyto gs_add_gating_method
 #' @importFrom methods as
 #' @importFrom utils read.csv write.csv
 #' @importFrom flowCore filters
@@ -570,7 +570,7 @@ setMethod(gate_draw,
 #' gs <- transform(gs, trans)
 #' 
 #' # Gate using gate_draw
-#' gating(Activation_gatingTemplate, gs)
+#' gt_gating(Activation_gatingTemplate, gs)
 #' 
 #' # draw gates using gate_draw - add contour lines & overlay control
 #' gate_draw(gs,
@@ -583,7 +583,7 @@ setMethod(gate_draw,
 #' )
 #' 
 #' # Constructed gate applied directly to GatingSet
-#' getNodes(gs)
+#' gs_get_pop_paths(gs)
 #' }
 #' 
 #' @export
@@ -620,7 +620,7 @@ setMethod(gate_draw,
       .cyto_gatingTemplate_check(parent, alias, gatingTemplate)
     }
 
-    fs <- flowWorkspace::getData(x, parent)
+    fs <- flowWorkspace::gs_pop_get_data(x, parent)
 
     # grouping required
     if (is.null(group_by)) {
@@ -868,14 +868,14 @@ setMethod(gate_draw,
       group_by <- NA
     }
 
-    # Use add_pop to apply gates to GatingSet and construct gatingTemplate
+    # Use gs_add_gating_method to apply gates to GatingSet and construct gatingTemplate
     if (is.null(gatingTemplate)) {
       message("Writing gatingTemplate.csv to store gates.")
 
       # need to extract alias from gates list into new named list
       pops <- list()
       for (i in seq_len(length(alias))) {
-        pops[[i]] <- suppressWarnings(add_pop(
+        pops[[i]] <- suppressWarnings(gs_add_gating_method(
           gs = x,
           alias = alias[i],
           parent = parent,
@@ -901,7 +901,7 @@ setMethod(gate_draw,
 
       pops <- list()
       for (i in seq_len(length(alias))) {
-        pops[[i]] <- suppressWarnings(add_pop(
+        pops[[i]] <- suppressWarnings(gs_add_gating_method(
           gs = x,
           alias = alias[i],
           parent = parent,
@@ -922,7 +922,7 @@ setMethod(gate_draw,
 
       pops <- list()
       for (i in seq_len(length(alias))) {
-        pops[[i]] <- suppressWarnings(add_pop(
+        pops[[i]] <- suppressWarnings(gs_add_gating_method(
           gs = x,
           alias = alias[i],
           parent = parent,

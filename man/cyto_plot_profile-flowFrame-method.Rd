@@ -50,10 +50,10 @@ gs <- transform(gs, trans)
 
 # Gate using gate_draw
 gt <- Activation_gatingTemplate
-gating(gt, gs)
+gt_gating(gt, gs)
 
 # Plot expression profile in all channels
-cyto_plot_profile(getData(gs, "T Cells")[[4]],
+cyto_plot_profile(gs_pop_get_data(gs, "T Cells")[[4]],
   axes_trans = trans
 )
 }

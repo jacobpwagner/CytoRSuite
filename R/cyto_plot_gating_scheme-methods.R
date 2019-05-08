@@ -74,8 +74,8 @@ setGeneric(
 #' @param ... extra arguments passed to cyto_plot, see
 #'   \code{\link{cyto_plot,flowFrame-method}} for more details.
 #'
-#' @importFrom openCyto templateGen gatingTemplate gating
-#' @importFrom flowWorkspace getGate getNodes getDescendants
+#' @importFrom openCyto gh_generate_template gatingTemplate gt_gating
+#' @importFrom flowWorkspace gh_pop_get_gate gs_pop_get_gate gh_get_pop_paths gh_pop_get_descendants
 #' @importFrom grDevices colorRampPalette n2mfrow
 #' @importFrom graphics mtext legend plot.new
 #'
@@ -100,7 +100,7 @@ setGeneric(
 #' 
 #' # Gate using gate_draw
 #' gt <- Activation_gatingTemplate
-#' gating(gt, gs)
+#' gt_gating(gt, gs)
 #' 
 #' # Gating scheme
 #' cyto_plot_gating_scheme(gs[[4]])
@@ -146,7 +146,7 @@ setMethod(cyto_plot_gating_scheme,
       if (getOption("CytoRSuite_wd_check") == TRUE) {
         if (.file_wd_check(gatingTemplate)) {
           gt <- gatingTemplate(gatingTemplate)
-          gating(gt, gh)
+          gt_gating(gt, gh)
         } else {
           stop(paste(
             gatingTemplate,
@@ -155,7 +155,7 @@ setMethod(cyto_plot_gating_scheme,
         }
       } else {
         gt <- gatingTemplate(gatingTemplate)
-        gating(gt, gh)
+        gt_gating(gt, gh)
       }
     }
 
@@ -165,7 +165,7 @@ setMethod(cyto_plot_gating_scheme,
     }
 
     # Populations
-    pops <- basename(getNodes(gh))
+    pops <- basename(gh_get_pop_paths(gh))
 
     # Number of Populations
     npop <- length(pops)
@@ -338,7 +338,7 @@ setMethod(cyto_plot_gating_scheme,
     }
 
     # Use GatingHierarchy directly to get gating scheme
-    gt <- templateGen(gh)
+    gt <- gh_generate_template(gh)
     gts <- data.frame(
       parent = basename(gt$parent),
       alias = gt$alias,
@@ -419,7 +419,7 @@ setMethod(cyto_plot_gating_scheme,
                 overlay <- c(alias, unlist(lapply(
                   seq_along(alias),
                   function(x) {
-                    basename(getDescendants(gh, alias[x]))
+                    basename(gh_pop_get_descendants(gh, alias[x]))
                   }
                 )))
               }
@@ -427,14 +427,14 @@ setMethod(cyto_plot_gating_scheme,
               if (!show_all) {
                 if (any(back_gate %in%
                   c(alias, unlist(lapply(seq_along(alias), function(x) {
-                    basename(getDescendants(gh, alias[x]))
+                    basename(gh_pop_get_descendants(gh, alias[x]))
                   }))))) {
                   ind <- c(
                     alias,
                     unlist(lapply(
                       seq_along(alias),
                       function(x) {
-                        basename(getDescendants(gh, alias[x]))
+                        basename(gh_pop_get_descendants(gh, alias[x]))
                       }
                     ))
                   )
@@ -477,7 +477,7 @@ setMethod(cyto_plot_gating_scheme,
           # Skip boolean gates
           if (any(
             unlist(lapply(alias, function(x) {
-              flowWorkspace:::isNegated(gh, x)
+              flowWorkspace:::gh_pop_is_negated(gh, x)
             }))
           )) {
             message("Skipping boolean gates.")
@@ -485,7 +485,7 @@ setMethod(cyto_plot_gating_scheme,
               lapply(
                 alias,
                 function(x) {
-                  flowWorkspace:::isNegated(gh, x)
+                  flowWorkspace:::gh_pop_is_negated(gh, x)
                 }
               )
             )]
@@ -610,8 +610,8 @@ setMethod(cyto_plot_gating_scheme,
 #' @param ... extra arguments passed to cyto_plot, see
 #'   \code{\link{cyto_plot,flowFrame-method}} for more details.
 #'
-#' @importFrom openCyto templateGen gatingTemplate gating
-#' @importFrom flowWorkspace getGate getNodes getDescendants pData
+#' @importFrom openCyto gh_generate_template gatingTemplate gt_gating
+#' @importFrom flowWorkspace gh_pop_get_gate gs_pop_get_gate gh_get_pop_paths gh_pop_get_descendants pData
 #' @importFrom grDevices colorRampPalette n2mfrow
 #' @importFrom graphics mtext legend plot.new
 #'
@@ -636,7 +636,7 @@ setMethod(cyto_plot_gating_scheme,
 #' 
 #' # Gate using gate_draw
 #' gt <- Activation_gatingTemplate
-#' gating(gt, gs)
+#' gt_gating(gt, gs)
 #' 
 #' # Gating scheme
 #' cyto_plot_gating_scheme(gs)
@@ -681,13 +681,13 @@ setMethod(cyto_plot_gating_scheme,
       if (getOption("CytoRSuite_wd_check") == TRUE) {
         if (.file_wd_check(gatingTemplate)) {
           gt <- gatingTemplate(gatingTemplate)
-          gating(gt, x)
+          gt_gating(gt, x)
         } else {
           stop(paste(gatingTemplate, "is not in this working directory"))
         }
       } else {
         gt <- gatingTemplate(gatingTemplate)
-        gating(gt, x)
+        gt_gating(gt, x)
       }
     }
 
@@ -752,7 +752,7 @@ setMethod(cyto_plot_gating_scheme,
     lapply(gs.lst, function(gs) {
 
       # Populations
-      pops <- basename(getNodes(gs[[1]]))
+      pops <- basename(gh_get_pop_paths(gs[[1]]))
 
       # Number of Populations
       npop <- length(pops)
@@ -928,7 +928,7 @@ setMethod(cyto_plot_gating_scheme,
       }
 
       # Use GatingSet directly to get gating scheme - template from first member
-      gt <- templateGen(gs[[1]])
+      gt <- gh_generate_template(gs[[1]])
       gts <- data.frame(
         parent = basename(gt$parent),
         alias = gt$alias,
@@ -1009,7 +1009,7 @@ setMethod(cyto_plot_gating_scheme,
                 overlay <- c(alias, unlist(lapply(
                   seq_along(alias),
                   function(x) {
-                    basename(getDescendants(gs[[1]], alias[x]))
+                    basename(gh_pop_get_descendants(gs[[1]], alias[x]))
                   }
                 )))
               }
@@ -1017,7 +1017,7 @@ setMethod(cyto_plot_gating_scheme,
               if (!show_all) {
                 if (any(back_gate %in%
                   c(alias, unlist(lapply(seq_along(alias), function(x) {
-                    basename(getDescendants(gs[[1]], alias[x]))
+                    basename(gh_pop_get_descendants(gs[[1]], alias[x]))
                   }))))) {
                   overlay <- back_gate[back_gate %in%
                     c(
@@ -1025,7 +1025,7 @@ setMethod(cyto_plot_gating_scheme,
                       unlist(lapply(
                         seq_along(alias),
                         function(x) {
-                          basename(getDescendants(gs[[1]], alias[x]))
+                          basename(gh_pop_get_descendants(gs[[1]], alias[x]))
                         }
                       ))
                     )]
@@ -1070,7 +1070,7 @@ setMethod(cyto_plot_gating_scheme,
           if (any(unlist(lapply(
             alias,
             function(x) {
-              flowWorkspace:::isNegated(
+              flowWorkspace:::gh_pop_is_negated(
                 gs[[1]],
                 x
               )
@@ -1079,7 +1079,7 @@ setMethod(cyto_plot_gating_scheme,
             message("skipping boolean gates.")
             alias <- alias[!unlist(
               lapply(alias, function(x) {
-                flowWorkspace:::isNegated(gs[[1]], x)
+                flowWorkspace:::gh_pop_is_negated(gs[[1]], x)
               })
             )]
           }

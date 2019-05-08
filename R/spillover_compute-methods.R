@@ -104,7 +104,7 @@ setGeneric(
 #' 
 #' # Gate using gate_draw
 #' gt <- Compensation_gatingTemplate
-#' gating(gt, gs)
+#' gt_gating(gt, gs)
 #' 
 #' # Channel match fille
 #' cmfile <- system.file("extdata",
@@ -113,7 +113,7 @@ setGeneric(
 #' )
 #' 
 #' # Compute fluorescent spillover matrix
-#' spill <- spillover_compute(getData(gs, "Single Cells"),
+#' spill <- spillover_compute(gs_pop_get_data(gs, "Single Cells"),
 #'   channel_match = cmfile,
 #'   spillover = "Example-spillover.csv"
 #' )
@@ -382,7 +382,7 @@ setMethod(spillover_compute,
 #' 
 #' # Gate using gate_draw
 #' gt <- Compensation_gatingTemplate
-#' gating(gt, gs)
+#' gt_gating(gt, gs)
 #' 
 #' # Channel match fille
 #' cmfile <- system.file("extdata",
@@ -407,7 +407,7 @@ setMethod(spillover_compute,
 #' options("CytoRSuite_interact" = TRUE)
 #' @importFrom flowCore estimateLogicle transform each_col fsApply
 #'   inverseLogicleTransform flowSet Subset
-#' @importFrom flowWorkspace getData pData getTransformations GatingSet getNodes
+#' @importFrom flowWorkspace gs_pop_get_data gh_pop_get_data pData gh_get_transformations GatingSet gs_get_pop_paths gh_get_pop_paths
 #' @importFrom methods as
 #'
 #' @seealso \code{\link{cyto_plot,flowFrame-method}}.
@@ -430,9 +430,9 @@ setMethod(spillover_compute,
 
     # Extract Population for Downstream Analyses
     if (!is.null(parent)) {
-      fs <- getData(gs, parent)
+      fs <- gs_pop_get_data(gs, parent)
     } else if (is.null(parent)) {
-      fs <- getData(gs, getNodes(gs)[length(getNodes(gs))])
+      fs <- gs_pop_get_data(gs, gs_get_pop_paths(gs)[length(gs_get_pop_paths(gs))])
     }
 
     # Merge files for use with estimateLogicle
@@ -466,7 +466,7 @@ setMethod(spillover_compute,
 #' @return complete transformList or transformerList object for all channels
 #'
 #' @importFrom flowCore estimateLogicle transformList
-#' @importFrom flowWorkspace transformerList GatingSet getTransformations
+#' @importFrom flowWorkspace transformerList GatingSet gh_get_transformations
 #' @importFrom methods new
 #'
 #' @author Dillon Hammill, \email{Dillon.Hammill@anu.edu.au}
@@ -522,7 +522,7 @@ setMethod(spillover_compute,
       if (length(x@transformation) == 0) {
 
         # GatingSet is not transformed
-        fs <- flowWorkspace::getData(x, "root")
+        fs <- flowWorkspace::gs_pop_get_data(x, "root")
         fr <- as(fs, "flowFrame")
         fs <- flowCore::flowSet(fr)
         gs <- suppressMessages(flowWorkspace::GatingSet(fs))
@@ -538,7 +538,7 @@ setMethod(spillover_compute,
 
           # Extract transformations from GatingSet
           trnsfrms <- lapply(channels[chans %in% channels], function(channel) {
-            getTransformations(x[[1]], channel, only.function = FALSE)
+            gh_get_transformations(x[[1]], channel, only.function = FALSE)
           })
           names(trnsfrms) <- channels[chans %in% channels]
 
@@ -553,7 +553,7 @@ setMethod(spillover_compute,
           } else {
 
             # Get remaining transformations with estimateLogicle
-            fs <- flowWorkspace::getData(x, "root")
+            fs <- flowWorkspace::gs_pop_get_data(x, "root")
             fr <- as(fs, "flowFrame")
             fs <- flowCore::flowSet(fr)
             gs <- suppressMessages(flowWorkspace::GatingSet(fs))
@@ -570,7 +570,7 @@ setMethod(spillover_compute,
         } else {
 
           # GatingSet does not contain transformations for fluorescent channels
-          fs <- flowWorkspace::getData(x, "root")
+          fs <- flowWorkspace::gs_pop_get_data(x, "root")
           fr <- as(fs, "flowFrame")
           fs <- flowCore::flowSet(fr)
           gs <- suppressMessages(flowWorkspace::GatingSet(fs))
@@ -667,7 +667,7 @@ setMethod(spillover_compute,
         # GatingSet contains some transformations
         if (length(x@transformation) != 0) {
           trnsfrms <- lapply(channels, function(channel) {
-            getTransformations(x[[1]], channel, only.function = FALSE)
+            gh_get_transformations(x[[1]], channel, only.function = FALSE)
           })
           names(trnsfrms) <- channels
 
@@ -705,7 +705,7 @@ setMethod(spillover_compute,
               } else {
 
                 # Some channels are still missing transformations
-                fs <- flowWorkspace::getData(x, "root")
+                fs <- flowWorkspace::gs_pop_get_data(x, "root")
                 fr <- as(fs, "flowFrame")
                 fs <- flowCore::flowSet(fr)
                 gs <- suppressMessages(flowWorkspace::GatingSet(fs))
@@ -734,7 +734,7 @@ setMethod(spillover_compute,
           } else {
 
             # Get remaining transformations with estimateLogicle
-            fs <- flowWorkspace::getData(x, "root")
+            fs <- flowWorkspace::gs_pop_get_data(x, "root")
             fr <- as(fs, "flowFrame")
             fs <- flowCore::flowSet(fr)
             gs <- suppressMessages(flowWorkspace::GatingSet(fs))
@@ -758,7 +758,7 @@ setMethod(spillover_compute,
 #'
 #' @return data which is appropriately transformed
 #'
-#' @importFrom flowWorkspace pData getData transformerList
+#' @importFrom flowWorkspace pData gs_pop_get_data gh_pop_get_data transformerList
 #' @importFrom flowCore transform transformList
 #'
 #' @noRd
@@ -787,7 +787,7 @@ setMethod(spillover_compute,
   } else if (inherits(x, "flowSet")) {
     sm <- flowWorkspace::pData(flowCore::parameters(x[[1]]))
   } else if (inherits(x, "GatingSet")) {
-    sm <- flowWorkspace::pData(flowCore::parameters(getData(x, "root")[[1]]))
+    sm <- flowWorkspace::pData(flowCore::parameters(gs_pop_get_data(x, "root")[[1]]))
   }
 
   # Extract channels that have been transformed
@@ -841,7 +841,7 @@ setMethod(spillover_compute,
     if (inherits(x, "flowFrame") | inherits(x, "flowSet")) {
       return(x)
     } else if (inherits(x, "GatingSet")) {
-      return(flowWorkspace::getData(x, parent))
+      return(flowWorkspace::gs_pop_get_data(x, parent))
     }
 
     # Data is transformed
@@ -858,7 +858,7 @@ setMethod(spillover_compute,
     channels <- colnames(x)
 
     trnsfrms <- lapply(channels, function(channel) {
-      getTransformations(x[[1]], channel, only.function = FALSE)
+      gh_get_transformations(x[[1]], channel, only.function = FALSE)
     })
     names(trnsfrms) <- channels
 
@@ -883,7 +883,7 @@ setMethod(spillover_compute,
   } else if (inherits(x, "flowSet")) {
     sm <- flowWorkspace::pData(flowCore::parameters(x[[1]]))
   } else if (inherits(x, "GatingSet")) {
-    sm <- pData(flowCore::parameters(flowWorkspace::getData(x, "root")[[1]]))
+    sm <- pData(flowCore::parameters(flowWorkspace::gs_pop_get_data(x, "root")[[1]]))
   }
 
   # Extract channels that have been transformed - apply inverse transform
@@ -891,7 +891,7 @@ setMethod(spillover_compute,
 
   # Extract flowSet from GatingSet
   if (inherits(x, "GatingSet")) {
-    x <- flowWorkspace::getData(x, parent)
+    x <- flowWorkspace::gs_pop_get_data(x, parent)
   }
 
   # Check all chans have been transformed
@@ -924,7 +924,7 @@ setMethod(spillover_compute,
 #' @param x flowFrame, flowSet or GatingSet object to check
 #'
 #' @importFrom flowCore parameters
-#' @importFrom flowWorkspace pData getData
+#' @importFrom flowWorkspace pData gs_pop_get_data gh_pop_get_data
 #'
 #' @noRd
 .checkDataTransform <- function(x) {
@@ -953,7 +953,7 @@ setMethod(spillover_compute,
   } else if (inherits(x, "GatingSet")) {
 
     # Extract root flowSet
-    fs <- getData(x, "root")
+    fs <- gs_pop_get_data(x, "root")
 
     # Extract summary stats
     sm <- pData(parameters(fs[[1]]))

@@ -266,7 +266,7 @@ test_that("cyto_stats_compute GatingSet method returns the correct statistics",{
   pops <- c("CD4 T Cells", "CD8 T Cells", "root", "Live Cells")
   cnts <- lapply(pops, function(pop){
     
-    fsApply(getData(gs, pop), nrow)
+    fsApply(gs_pop_get_data(gs, pop), nrow)
     
   })
   CD4 <- do.call("cbind", cnts[c(1,3,4)])

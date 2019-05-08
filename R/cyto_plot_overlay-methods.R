@@ -46,7 +46,7 @@ setGeneric(
 #' gs <- transform(gs, trans)
 #' 
 #' # Gate using gate_draw
-#' gating(Activation_gatingTemplate, gs)
+#' gt_gating(Activation_gatingTemplate, gs)
 #' 
 #' # Plot
 #' cyto_plot(gs[[4]],
@@ -56,7 +56,7 @@ setGeneric(
 #' )
 #' 
 #' # Overlay CD4 T Cells
-#' cyto_plot_overlay(getData(gs, "CD4 T Cells")[[4]],
+#' cyto_plot_overlay(gs_pop_get_data(gs, "CD4 T Cells")[[4]],
 #'   channels = c("APC-Cy7-A", "PE-A"),
 #'   point_col = "magenta"
 #' )
@@ -114,7 +114,7 @@ setMethod(cyto_plot_overlay,
 #' gs <- transform(gs, trans)
 #' 
 #' # Gate using gate_draw
-#' gating(Activation_gatingTemplate, gs)
+#' gt_gating(Activation_gatingTemplate, gs)
 #' 
 #' # Plot
 #' cyto_plot(gs[[4]],
@@ -124,7 +124,7 @@ setMethod(cyto_plot_overlay,
 #' )
 #' 
 #' # Overlay CD4 T Cells
-#' cyto_plot_overlay(getData(gs, "CD4 T Cells")[2:4],
+#' cyto_plot_overlay(gs_pop_get_data(gs, "CD4 T Cells")[2:4],
 #'   channels = c("APC-Cy7-A", "PE-A"),
 #'   point_col = c("magenta", "orange", "green")
 #' )
@@ -219,7 +219,7 @@ setMethod(cyto_plot_overlay,
 #' gs <- transform(gs, trans)
 #' 
 #' # Gate using gate_draw
-#' gating(Activation_gatingTemplate, gs)
+#' gt_gating(Activation_gatingTemplate, gs)
 #' 
 #' # Plot
 #' cyto_plot(gs[[4]],
@@ -230,8 +230,8 @@ setMethod(cyto_plot_overlay,
 #' 
 #' # Overlay CD4 T Cells & Dendritic Cells
 #' cyto_plot_overlay(list(
-#'   getData(gs, "CD4 T Cells")[[4]],
-#'   getData(gs, "Dendritic Cells")[[4]]
+#'   gs_pop_get_data(gs, "CD4 T Cells")[[4]],
+#'   gs_pop_get_data(gs, "Dendritic Cells")[[4]]
 #' ),
 #' channels = c("APC-Cy7-A", "PE-A"),
 #' point_col = c("magenta", "red")

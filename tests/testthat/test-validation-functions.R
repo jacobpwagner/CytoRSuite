@@ -251,15 +251,15 @@ test_that(".cyto_overlay_check GatingHierarchy method", {
                "'overlay' does not exist in the GatingHierarchy.", 
                fixed = TRUE)
 
-  ov <- list(getData(gs, "T Cells")[[1]])
+  ov <- list(gs_pop_get_data(gs, "T Cells")[[1]])
   names(ov) <- "T Cells"
 
   expect_equal(.cyto_overlay_check(gs[[1]], 
                                    overlay = "T Cells"), 
                ov)
   expect_equal(.cyto_overlay_check(gs[[1]], 
-                                   overlay = getData(gs, "T Cells")[[4]]), 
-               list(getData(gs, "T Cells")[[4]]))
+                                   overlay = gs_pop_get_data(gs, "T Cells")[[4]]), 
+               list(gs_pop_get_data(gs, "T Cells")[[4]]))
 })
 
 test_that(".cyto_overlay_check GatingSet method", {
@@ -268,7 +268,7 @@ test_that(".cyto_overlay_check GatingSet method", {
                "overlay' does not exist in the GatingHierarchy.", 
                fixed = TRUE)
 
-  TC <- getData(gs, "T Cells")
+  TC <- gs_pop_get_data(gs, "T Cells")
   ov <- list(list(TC[[1]]), list(TC[[2]]), list(TC[[3]]), list(TC[[4]]))
 
   expect_equivalent(.cyto_overlay_check(gs, overlay = "T Cells"), ov)

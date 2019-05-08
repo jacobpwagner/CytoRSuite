@@ -79,10 +79,10 @@ gtf <- read.csv(system.file("extdata",
                             package = "CytoRSuiteData"))
 
 # Gating -
-gating(gt, gs)
+gt_gating(gt, gs)
 
 # Extract T Cells Population -
-Va2 <- getData(gs, "T Cells")
+Va2 <- gs_pop_get_data(gs, "T Cells")
 
 # Compensation GatingSet -------------------------------------------------------
 Compensation <- read.flowSet(path = paste0(datadir,
@@ -108,7 +108,7 @@ gtcf <- read.csv(system.file("extdata",
                              package = "CytoRSuiteData"))
 
 # Gating -
-gating(gtc, gsc)
+gt_gating(gtc, gsc)
 
 # Spillover Matrix -------------------------------------------------------------
 

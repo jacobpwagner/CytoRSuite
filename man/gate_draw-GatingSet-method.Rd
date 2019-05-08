@@ -86,7 +86,7 @@ trans <- estimateLogicle(gs[[4]], cyto_fluor_channels(fs))
 gs <- transform(gs, trans)
 
 # Gate using gate_draw
-gating(Activation_gatingTemplate, gs)
+gt_gating(Activation_gatingTemplate, gs)
 
 # draw gates using gate_draw - add contour lines & overlay control
 gate_draw(gs,
@@ -99,7 +99,7 @@ gate_draw(gs,
 )
 
 # Constructed gate applied directly to GatingSet
-getNodes(gs)
+gs_get_pop_paths(gs)
 }
 
 }

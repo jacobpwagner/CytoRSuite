@@ -18,7 +18,7 @@
 #'   is passed onto the \code{openCyto} gating pipeline to apply these gates to
 #'   the GatingSet.
 #'
-#' @importFrom openCyto registerPlugins
+#' @importFrom openCyto register_plugins
 #'
 #' @seealso \code{\link{cyto_plot,flowFrame-method}}
 #'
@@ -31,7 +31,7 @@
 #' 
 #' gs <- GatingSet(fs) # add flowSet to GatingSet
 #' 
-#' template <- add_pop(
+#' template <- gs_add_gating_method(
 #'   gs,
 #'   alias = "Lymphocytes", pop = "+", parent = "root",
 #'   dims = "FSC-A,SSC-A", gating_method = "gate_manual",
@@ -73,7 +73,7 @@
 #'
 #' @return pass saved gate to openCyto to apply to all samples.
 #'
-#' @importFrom openCyto registerPlugins
+#' @importFrom openCyto register_plugins
 #'
 #' @author Dillon Hammill (Dillon.Hammill@anu.edu.au)
 #'
@@ -119,7 +119,7 @@
 #'
 #' @return index of gate to apply to samples.
 #'
-#' @importFrom openCyto registerPlugins
+#' @importFrom openCyto register_plugins
 #' @importFrom flowWorkspace pData
 #'
 #' @author Dillon Hammill (Dillon.Hammill@anu.edu.au)

@@ -995,7 +995,7 @@ setMethod(cyto_plot,
 #' 
 #' # Apply gatingTemplate
 #' gt <- Activation_gatingTemplate
-#' gating(gt, gs)
+#' gt_gating(gt, gs)
 #' 
 #' # 2-D scatter plot with Overlays & Gate
 #' cyto_plot(gs[[4]],
@@ -1019,8 +1019,9 @@ setMethod(cyto_plot,
 #'   alias = "CD69+ CD4 T Cells",
 #'   channels = "7-AAD-A"
 #' )
-#' @importFrom flowWorkspace getGate getData sampleNames getTransformations
-#'   getNodes
+#' @importFrom flowWorkspace gh_pop_get_gate gs_pop_get_gate
+#' gs_pop_get_data gh_pop_get_data sampleNames gh_get_transformations 
+#' gh_get_pop_paths gs_get_pop_paths gh_pop_get_data gs_pop_get_data
 #'
 #' @seealso \code{\link{cyto_plot,flowFrame-method}}
 #' @seealso \code{\link{cyto_plot,flowSet-method}}
@@ -1109,14 +1110,14 @@ setMethod(cyto_plot,
 
     # Check channels
     channels <- cyto_channel_check(
-      x = getData(gh, "root"),
+      x = gh_pop_get_data(gh, "root"),
       channels,
       plot = TRUE
     )
 
     # Check supplied alias exists in GatingSHierarchy
     if (!is.null(alias)) {
-      if (!all(alias %in% basename(getNodes(gh)))) {
+      if (!all(alias %in% basename(gh_get_pop_paths(gh)))) {
         stop("Supplied alias does not exist in the GatingHierarchy")
       }
     }
@@ -1124,7 +1125,7 @@ setMethod(cyto_plot,
     # Gates - either alias or gate not both
     if (!.valid_gates(gate, channels)) {
       if (!is.null(alias)) {
-        gate <- lapply(alias, function(pop) getGate(gh, pop))
+        gate <- lapply(alias, function(pop) gh_pop_get_gate(gh, pop))
         names(gate) <- alias
       }
     }
@@ -1134,7 +1135,7 @@ setMethod(cyto_plot,
 
       # Some transforms found - replace these entries in trans object
       trnsfrms <- lapply(channels, function(channel) {
-        getTransformations(gh, channel, only.function = FALSE)
+        gh_get_transformations(gh, channel, only.function = FALSE)
       })
       names(trnsfrms) <- channels
 
@@ -1158,7 +1159,7 @@ setMethod(cyto_plot,
     }
 
     # Extract population from GatingHierarchy
-    fr <- getData(gh, parent)
+    fr <- gh_pop_get_data(gh, parent)
 
     # Titles
     if (missing(title)) {
@@ -1188,7 +1189,7 @@ setMethod(cyto_plot,
       # Extract populations to overlay - list of flowSets
       if (class(overlay) == "character") {
         overlay <- lapply(overlay, function(overlay) {
-          getData(gh, overlay)
+          gh_pop_get_data(gh, overlay)
         })
       }
     }
@@ -1446,7 +1447,7 @@ setMethod(cyto_plot,
 #' 
 #' # Apply gatingTemplate
 #' gt <- Activation_gatingTemplate
-#' gating(gt, gs)
+#' gt_gating(gt, gs)
 #' 
 #' # 2-D scatter plot with overlay & Gates
 #' cyto_plot(gs,
@@ -1463,8 +1464,10 @@ setMethod(cyto_plot,
 #'   channels = c("Alexa Fluor 488-A", "Alexa Fluor 700-A"),
 #'   overlay = c("CD69+ CD4 T Cells", "CD69+ CD8 T Cells")
 #' )
-#' @importFrom flowWorkspace getGate getData sampleNames getTransformations
-#'   sampleNames pData getNodes
+#' @importFrom flowWorkspace gh_pop_get_gate gs_pop_get_gate
+#' gs_pop_get_data gh_pop_get_data sampleNames gh_get_transformations 
+#' gh_get_pop_paths gs_get_pop_paths gh_pop_get_data gs_pop_get_data
+#' pData
 #' @importFrom flowCore flowSet
 #'
 #' @seealso \code{\link{cyto_plot,flowFrame-method}}
@@ -1558,7 +1561,7 @@ setMethod(cyto_plot,
 
     # Check supplied alias exists in GatingSet
     if (!missing(alias)) {
-      if (!all(alias %in% basename(getNodes(x)))) {
+      if (!all(alias %in% basename(gs_get_pop_paths(x)))) {
         stop("Supplied alias does not exist in the GatingSet.")
       }
     }
@@ -1575,7 +1578,7 @@ setMethod(cyto_plot,
 
       # Some transforms found - replace these entries in transList
       trnsfrms <- lapply(channels, function(channel) {
-        getTransformations(gs[[1]], channel, only.function = FALSE)
+        gh_get_transformations(gs[[1]], channel, only.function = FALSE)
       })
       names(trnsfrms) <- channels
 
@@ -1632,7 +1635,7 @@ setMethod(cyto_plot,
       }
 
       # Extract data
-      fs <- getData(gs, parent)
+      fs <- gs_pop_get_data(gs, parent)
 
       # Sampling happens in cyto_plot flowSet method
       fr.lst <- .cyto_merge(gs,
@@ -1667,7 +1670,7 @@ setMethod(cyto_plot,
         if (!is.null(alias)) {
           gate <- lapply(nms, function(nm) {
             gt <- lapply(alias, function(x) {
-              getGate(gs[[match(nm, pd$group_by)]], x)
+              gh_pop_get_gate(gs[[match(nm, pd$group_by)]], x)
             })
             names(gt) <- alias
             return(gt)
@@ -1700,7 +1703,7 @@ setMethod(cyto_plot,
     } else if (group_by[1] == FALSE) {
 
       # Extract population
-      fs <- getData(gs, parent)
+      fs <- gs_pop_get_data(gs, parent)
 
       # Plot titles
       if (missing(title)) {
@@ -1743,7 +1746,7 @@ setMethod(cyto_plot,
       if (!is.null(alias)) {
         gate <- lapply(seq_len(length(gs)), function(x) {
           gt <- lapply(alias, function(y) {
-            getGate(gs[[x]], y)
+            gh_pop_get_gate(gs[[x]], y)
           })
           names(gt) <- alias
           return(gt)

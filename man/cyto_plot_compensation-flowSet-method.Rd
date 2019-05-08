@@ -85,7 +85,7 @@ gs <- GatingSet(Compensation)
 
 # Gate single cells using gate_draw
 gt <- Compensation_gatingTemplate
-gating(gt, gs)
+gt_gating(gt, gs)
 
 # Channel match file
 cmfile <- system.file("extdata",
@@ -94,7 +94,7 @@ cmfile <- system.file("extdata",
 )
 
 # Compensation plots
-cyto_plot_compensation(getData(gs, "Single Cells"),
+cyto_plot_compensation(gs_pop_get_data(gs, "Single Cells"),
   channel_match = cmfile
 )
 

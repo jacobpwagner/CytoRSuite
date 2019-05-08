@@ -1,6 +1,6 @@
 context("gatingTemplate Modifiers")
 
-gs3 <- clone(gs)
+gs3 <- gs_clone(gs)
 
 # gate_remove ------------------------------------------------------------------
 
@@ -21,7 +21,7 @@ test_that("gate_remove", {
   gate_remove(gs3, 
               alias = "CD4 T Cells", 
               gatingTemplate = "Activation-gatingTemplate.csv")
-  expect_equal(basename(getNodes(gs3)), 
+  expect_equal(basename(gs_get_pop_paths(gs3)), 
                c("root",
                  "Cells",
                  "Single Cells",
@@ -43,7 +43,7 @@ test_that("gate_remove", {
   gate_remove(gs3, 
               alias = c("Dendritic Cells", "T Cells"), 
               gatingTemplate = "Activation-gatingTemplate.csv")
-  expect_equal(basename(getNodes(gs3)), 
+  expect_equal(basename(gs_get_pop_paths(gs3)), 
                c("root",
                  "Cells",
                  "Single Cells",
@@ -99,7 +99,7 @@ test_that("gate_extract", {
 
 test_that("gate_edit", {
   
-  gs3 <- clone(gs)
+  gs3 <- gs_clone(gs)
   
   expect_error(gate_edit(gs), 
                "Please supply the name of the parent population.")
@@ -129,7 +129,7 @@ test_that("gate_edit", {
             alias = "Cells", 
             gatingTemplate = "Activation-gatingTemplate.csv")
   
-  expect_equal(getGate(gs3, "Cells")[[1]], pg)
+  expect_equal(gs_pop_get_gate(gs3, "Cells")[[1]], pg)
   expect_equal(gate_extract(parent = "root", 
                             alias = "Cells", 
                             "Activation-gatingTemplate.csv")[[1]][[1]][[1]], 
@@ -142,7 +142,7 @@ test_that("gate_edit", {
             gatingTemplate = "Activation-gatingTemplate.csv", 
             type = "r")
   
-  expect_equal(getGate(gs3, "Cells")[[1]], rg)
+  expect_equal(gs_pop_get_gate(gs3, "Cells")[[1]], rg)
   expect_equal(gate_extract(parent = "root", 
                             alias = "Cells", 
                             "Activation-gatingTemplate.csv")[[1]][[1]][[1]], 
